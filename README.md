@@ -41,4 +41,6 @@ Cell_ranked.pdf shows the ranked abdundance of the number of cells per rabies ba
 ### **run.rarefaction.sh**
 #### This script subsamples the fastq files and determines the number error corrected barcodes. Plots are generated to determine if the library has been sequenced to sufficient depth
 
+Should be a shell script that subsamples fastq >  barcode_extraction.py > records as table
+
 

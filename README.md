@@ -24,7 +24,7 @@ cell barcode  | rabies barcode  | counts
 ------------- | ----------------| -----
 
 ## Step 3: Visualize barcode distributions
-### **viz.corrected.barcodes.R cell.rabies.corrected_counts.tsv
+### **viz.corrected.barcodes.R**
 
 Output: viz.corrected.pdf
 

@@ -36,7 +36,6 @@ Rabies_rannked.pdf shows the ranked abundance of rabies barcode counts per cell
 
 Cell_ranked.pdf shows the ranked abdundance of the number of cells per rabies barcode
 
-Output: viz.corrected.pdf
 
 ## Step 4: Rarefaction curve
 ### **run.rarefaction.sh**

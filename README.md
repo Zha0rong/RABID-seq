@@ -4,16 +4,36 @@
 
 **Rabie.Barcode.processing.py**: processes all fastq files in folder, generating the following tables: 
 
-Output: Cell_statistics.tsv
+Output 1: Cell_statistics.tsv
 
-barcode  | # with only correct 3' handle | # with only correct 5' handle | # with both handles | # with correct structure
--------- | --------------------------| --------------------------| --------------------------| --------------------------
+rabies barcode  | # with only correct 3' handle | # with only correct 5' handle | # with both handles | # with correct structure
+--------------- | ------------------------------| ------------------------------| --------------------| --------------
 
+Currently we decide that any read that contains one handle (5' or 3') and the correct barcode structure is kept
 
-**error.correct.barcodes.py**
+Output 2: cell.rabies.count.tsv
 
-## Step 2: Quality control 
+cell barcode  | rabies barcode  | count
+------------- | ----------------| -----
 
-### viz.corrected.barcodes.R
+## Step 2: Error correct barcodes
+
+**run.error.correction.py**
+
+Output: Cell_statistics_corrected.tsv
+
+cell barcode  | # with error correction
+------------- | -----------------------
+
+## Step 3: Visualize barcode distributions
+
+**viz.corrected.barcodes.R**
 
 Output: viz.corrected.pdf
+
+## Step 4: Generate rabies count table 
+
+**viz.corrected.barcodes.R**
+
+cell barcode | rabies barcode | # with error correction
+------------ | ---------------| ---------------|

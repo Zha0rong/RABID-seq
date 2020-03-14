@@ -1,6 +1,6 @@
 # Rabid-seq bioinformatics workflow
 
-## Step 1: Find Rabies barcodes in fastq files
+## Step 1: Extract Rabies barcodes in fastq files
 ### **Rabie.Barcode.processing.py**: processes all fastq files in folder, generating the following tables: 
 
 Output 1: Cell_statistics.tsv
@@ -25,6 +25,16 @@ cell barcode  | rabies barcode  | counts
 
 ## Step 3: Visualize barcode distributions
 ### **viz.corrected.barcodes.R**
+
+Barcode_loss.pdf shows the number of correct barcodes over the extraction and correction process
+
+Rabies_histogram.pdf shows # of rabies barcodes per cell
+
+Cell_histogram.pdf shows # of cells per rabies barcodes
+
+Rabies_rannked.pdf shows the ranked abundance of rabies barcode counts per cell
+
+Cell_ranked.pdf shows the ranked abdundance of the number of cells per rabies barcode
 
 Output: viz.corrected.pdf
 

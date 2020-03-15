@@ -121,7 +121,7 @@ class Rabid_Barcode:
                 writer.writerow([cell,self.cell_information[cell][0],self.cell_information[cell][1],self.cell_information[cell][2],self.cell_information[cell][3],self.cell_information[cell][4]])
         csvfile.close()
         os.system('starcode --print-clusters --dist 1 -i %s_filtered.fastq -o %s.clustering.results'%(self.outputfile,self.outputfile))
-        starcode=open('S505.clustering.results','r')
+        starcode=open('%s.clustering.results'%(samplename),'r')
         starcode.line=starcode.readlines()
         connection={}
         for line in starcode.line:
@@ -153,7 +153,44 @@ class Rabid_Barcode:
                         umi[connection[reads]].append(umis)
         file_matrix.to_csv('%s.connection.csv'%(self.outputfile), sep=',', encoding='utf-8')
         os.remove('%s_filtered.fastq'%(self.outputfile))
-            
+        
+        
+        #Quantification without correction
+        uncorrected.rabie.barcodes=[]
+        starcode=open('%s.clustering.results'%(samplename),'r')
+        starcode.line=starcode.readlines()
+        for line in starcode.line:
+            connectionitem=line.split(sep='\t')[0]
+            time=int(line.split(sep='\t')[1])
+            cluster=line.split(sep='\t')[2]
+            for member in cluster.split(sep=','):
+                if member not in uncorrected.rabie.barcodes:
+                    uncorrected.rabie.barcodes.append(member.strip('\n'))
+            if connectionitem not in uncorrected.rabie.barcodes:
+                uncorrected.rabie.barcodes.append(connectionitem.strip('\n'))
+        uncorrected.quantification={}
+        uncorrected.umi={}
+        for values in uncorrected.rabie.barcodes:
+            uncorrected.quantification[values]=0
+            uncorrected.umi[values]=[]  
+        file_matrix=pd.DataFrame(0,index=uncorrected.rabie.barcodes,columns=list(valid_cells))
+        for read in ParseFastq(pathstofastqs=['%s_filtered.fastq'%(self.outputfile)]):
+            cellname=read[0].split(' ')[1].split(':')
+            cellname=cellname[0]+cellname[1]
+            reads=read[1][0].strip('\n')
+            umis=read[0].split(' ')[1].split(':')[2]
+            if cellname in valid_cells:
+                if reads in uncorrected.rabie.barcodes:
+                    if umis not in umi[reads]:
+                        file_matrix.loc[reads,cellname]+=1
+                        uncorrected.umi[reads].append(umis)
+        file_matrix.to_csv('%s.connection.csv'%(self.outputfile), sep=',', encoding='utf-8')
+        
+        
+        
+        
+        
+        
 if __name__=="__main__":
     samplelist=os.listdir('./')
     samplelist=[x for x in samplelist if '_STAR_Reads.fastq.gz' in x]

@@ -1,5 +1,9 @@
 # Rabid-seq bioinformatics workflow
 
+## Step 0: Convert paired end reads to a single fastq file
+### Use inDrops script to convert a PE file with R1 cell barcode and R2 Rabies barcode, into a SE file containing cell barcode and UMI in the header and rabies barcode as the read.
+
+
 ## Step 1: Extract Rabies barcodes in fastq files
 ### **Rabie.Barcode.processing.py**: processes all fastq files in folder, generating the following tables: 
 

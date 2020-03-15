@@ -6,6 +6,11 @@
 
 ## Step 1: Extract Rabies barcodes in fastq files
 ### **Rabie.Barcode.processing.py**: processes all fastq files in folder, generating the following tables: 
+```
+python Rabie.Barcode.processing.py [] [] []
+
+
+```
 
 Output 1: Cell_statistics.tsv
 
@@ -22,6 +27,11 @@ cell barcode  | rabies barcode  | counts
 ## Step 2: Error correct barcodes
 ### **run.error.correction.py**
 
+```
+python run.error.correction.py [] [] []
+
+```
+
 Output: cell.rabies.corrected_counts.tsv
 
 cell barcode  | rabies barcode  | counts
@@ -29,6 +39,11 @@ cell barcode  | rabies barcode  | counts
 
 ## Step 3: Visualize barcode distributions
 ### **viz.corrected.barcodes.R**
+
+```
+Rscript viz.corrected.barcodes.R 
+
+```
 
 Barcode_loss.pdf shows the number of correct barcodes over the extraction and correction process
 
@@ -40,11 +55,15 @@ Rabies_rannked.pdf shows the ranked abundance of rabies barcode counts per cell
 
 Cell_ranked.pdf shows the ranked abdundance of the number of cells per rabies barcode
 
-
 ## Step 4: Rarefaction curve
 ### **run.rarefaction.sh**
 #### This script subsamples the fastq files and determines the number error corrected barcodes. Plots are generated to determine if the library has been sequenced to sufficient depth
 
-Should be a shell script that subsamples fastq >  barcode_extraction.py > records as table
+```
+# IDEA: This is a shell script that subsamples fastq and pipes to the full pipeline above. No need to rewrite the above processing steps
+run.rarefaction.sh
+
+```
+
 
 

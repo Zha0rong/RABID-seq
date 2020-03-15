@@ -4,14 +4,14 @@
 ### Use inDrops script to convert a PE file with R1 cell barcode and R2 Rabies barcode, into a SE file containing cell barcode and UMI in the header and rabies barcode as the read.
 
 ```diff
-+To do: The steps from raw data to SE fastq need to be outlined
+-To do: The steps from raw data to SE fastq need to be outlined
 ```
 
 ## Step 1: Extract Rabies barcodes in fastq files
 ### **Rabie.Barcode.processing.py**: processes all fastq files in folder, generating the following tables: 
 
 ```diff
-+To do: usage for this script
+-To do: usage for this script
 ```
 
 ```python
@@ -35,7 +35,7 @@ cell barcode  | rabies barcode  | counts
 ### **run.error.correction.py**
 
 ```diff
-+To do: usage for this script
+-To do: usage for this script
 ```
 
 ```python
@@ -52,7 +52,8 @@ cell barcode  | rabies barcode  | counts
 ### **viz.corrected.barcodes.R**
 
 ```diff
-+To do: usage for this script
+-Iain to modify this script to incorporate cell data once available
+-To do: usage for this script
 ```
 
 ```R

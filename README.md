@@ -36,6 +36,7 @@ cell barcode  | rabies barcode  | counts
 
 ```diff
 -To do: usage for this script
+-I think we will we want to add a normalization step based on number of reads
 ```
 
 ```python
@@ -47,6 +48,7 @@ Output: cell.rabies.corrected_counts.tsv
 
 cell barcode  | rabies barcode  | counts
 ------------- | ----------------| -----
+
 
 ## Step 3: Visualize barcode distributions
 ### **viz.corrected.barcodes.R**

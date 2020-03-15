@@ -121,7 +121,7 @@ class Rabid_Barcode:
                 writer.writerow([cell,self.cell_information[cell][0],self.cell_information[cell][1],self.cell_information[cell][2],self.cell_information[cell][3],self.cell_information[cell][4]])
         csvfile.close()
         os.system('starcode --print-clusters --dist 1 -i %s_filtered.fastq -o %s.clustering.results'%(self.outputfile,self.outputfile))
-        starcode=open('%s.clustering.results'%(samplename),'r')
+        starcode=open('%s.clustering.results'%(self.samplename),'r')
         starcode.line=starcode.readlines()
         connection={}
         for line in starcode.line:
@@ -134,11 +134,14 @@ class Rabid_Barcode:
         quantification={}
         umi={}
         valid_cells=[cell for cell in list(self.cell_information.keys()) if self.cell_information[cell][4]>0]
+        for cell in valid_cells:
+            quantification[cell]=[0,0,0]#Total number of reads, number of reads that do not need correction, number of reads need correction
         starcode.close()
         value=connection.values()
         value=list(dict.fromkeys(value))
-        for values in value:
-            quantification[values]=0
+        umi_stats=connection.keys()
+        umi_stats=list(dict.fromkeys(umi_stats))
+        for values in umi_stats:
             umi[values]=[]
         file_matrix=pd.DataFrame(0,index=list(value),columns=list(valid_cells))
         for read in ParseFastq(pathstofastqs=['%s_filtered.fastq'%(self.outputfile)]):
@@ -148,44 +151,62 @@ class Rabid_Barcode:
             umis=read[0].split(' ')[1].split(':')[2]
             if cellname in valid_cells:
                 if reads in connection.keys():
-                    if umis not in umi[connection[reads]]:
+                    quantification[cellname][0]+=1
+                    if connection[reads]==reads:
+                        quantification[cellname][1]+=1
+                    elif connection[reads]!=reads:
+                        quantification[cellname][2]+=1
+                    if umis not in umi[reads]:
                         file_matrix.loc[connection[reads],cellname]+=1
                         umi[connection[reads]].append(umis)
         file_matrix.to_csv('%s.connection.csv'%(self.outputfile), sep=',', encoding='utf-8')
-        os.remove('%s_filtered.fastq'%(self.outputfile))
-        
-        
+        with open('%s_Cell_quantification_statistics.tsv'%(self.outputfile), "w", newline="") as csvfile:
+            writer=csv.writer(csvfile,delimiter='\t')
+            writer.writerow(['Cellname','Total Number of reads','number of reads that do not need correction','number of reads need correction'])
+            for cell in quantification.keys():
+                writer.writerow([cell,quantification[cell][0],quantification[cell][1],quantification[cell][2]])
+        csvfile.close()
+        with open('%s.connection.ideal.format.csv'%(self.outputfile), "w", newline="") as csvfile:
+            writer=csv.writer(csvfile,delimiter='\t')
+            writer.writerow(['Cellname','Rabie','Counts'])
+            for i in range(len(valid_cells)):
+                for j in range(len(value)):
+                    if file_matrix.loc[value[j],valid_cells[i]]!=0:
+                        writer.writerow([valid_cells[i],value[j],file_matrix.loc[value[j],valid_cells[i]]])
+        csvfile.close()
         #Quantification without correction
-        uncorrected.rabie.barcodes=[]
-        starcode=open('%s.clustering.results'%(samplename),'r')
+        uncorrected_rabie_barcodes=[]
+        starcode=open('%s.clustering.results'%(self.samplename),'r')
         starcode.line=starcode.readlines()
         for line in starcode.line:
             connectionitem=line.split(sep='\t')[0]
             time=int(line.split(sep='\t')[1])
             cluster=line.split(sep='\t')[2]
             for member in cluster.split(sep=','):
-                if member not in uncorrected.rabie.barcodes:
-                    uncorrected.rabie.barcodes.append(member.strip('\n'))
-            if connectionitem not in uncorrected.rabie.barcodes:
-                uncorrected.rabie.barcodes.append(connectionitem.strip('\n'))
-        uncorrected.quantification={}
-        uncorrected.umi={}
-        for values in uncorrected.rabie.barcodes:
-            uncorrected.quantification[values]=0
-            uncorrected.umi[values]=[]  
-        file_matrix=pd.DataFrame(0,index=uncorrected.rabie.barcodes,columns=list(valid_cells))
+                if member.strip('\n') not in uncorrected_rabie_barcodes:
+                    uncorrected_rabie_barcodes.append(member.strip('\n'))
+            if connectionitem.strip('\n') not in uncorrected_rabie_barcodes:
+                uncorrected_rabie_barcodes.append(connectionitem.strip('\n'))
+        starcode.close()
+        uncorrected_quantification={}
+        uncorrected_umi={}
+        for values in uncorrected_rabie_barcodes:
+            uncorrected_quantification[values]=0
+            uncorrected_umi[values]=[]  
+        file_matrix=pd.DataFrame(0,index=uncorrected_rabie_barcodes,columns=list(valid_cells))
         for read in ParseFastq(pathstofastqs=['%s_filtered.fastq'%(self.outputfile)]):
             cellname=read[0].split(' ')[1].split(':')
             cellname=cellname[0]+cellname[1]
             reads=read[1][0].strip('\n')
             umis=read[0].split(' ')[1].split(':')[2]
             if cellname in valid_cells:
-                if reads in uncorrected.rabie.barcodes:
-                    if umis not in umi[reads]:
+                if reads in uncorrected_rabie_barcodes:
+                    if uncorrected_umi not in uncorrected_umi[reads]:
                         file_matrix.loc[reads,cellname]+=1
-                        uncorrected.umi[reads].append(umis)
-        file_matrix.to_csv('%s.connection.csv'%(self.outputfile), sep=',', encoding='utf-8')
-        
+                        uncorrected_umi[reads].append(umis)
+        file_matrix.to_csv('%s.Uncorrected.connection.csv'%(self.outputfile), sep=',', encoding='utf-8')
+        os.remove('%s_filtered.fastq'%(self.outputfile))
+       
         
         
         

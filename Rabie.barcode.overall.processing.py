@@ -175,36 +175,36 @@ class Rabid_Barcode:
                         writer.writerow([valid_cells[i],value[j],file_matrix.loc[value[j],valid_cells[i]]])
         csvfile.close()
         #Quantification without correction
-        uncorrected_rabie_barcodes=[]
-        starcode=open('%s.clustering.results'%(self.samplename),'r')
-        starcode.line=starcode.readlines()
-        for line in starcode.line:
-            connectionitem=line.split(sep='\t')[0]
-            time=int(line.split(sep='\t')[1])
-            cluster=line.split(sep='\t')[2]
-            for member in cluster.split(sep=','):
-                if member.strip('\n') not in uncorrected_rabie_barcodes:
-                    uncorrected_rabie_barcodes.append(member.strip('\n'))
-            if connectionitem.strip('\n') not in uncorrected_rabie_barcodes:
-                uncorrected_rabie_barcodes.append(connectionitem.strip('\n'))
-        starcode.close()
-        uncorrected_quantification={}
-        uncorrected_umi={}
-        for values in uncorrected_rabie_barcodes:
-            uncorrected_quantification[values]=0
-            uncorrected_umi[values]=[]  
-        file_matrix=pd.DataFrame(0,index=uncorrected_rabie_barcodes,columns=list(valid_cells))
-        for read in ParseFastq(pathstofastqs=['%s_filtered.fastq'%(self.outputfile)]):
-            cellname=read[0].split(' ')[1].split(':')
-            cellname=cellname[0]+cellname[1]
-            reads=read[1][0].strip('\n')
-            umis=read[0].split(' ')[1].split(':')[2]
-            if cellname in valid_cells:
-                if reads in uncorrected_rabie_barcodes:
-                    if uncorrected_umi not in uncorrected_umi[reads]:
-                        file_matrix.loc[reads,cellname]+=1
-                        uncorrected_umi[reads].append(umis)
-        file_matrix.to_csv('%s.Uncorrected.connection.csv'%(self.outputfile), sep=',', encoding='utf-8')
+        #uncorrected_rabie_barcodes=[]
+        #starcode=open('%s.clustering.results'%(self.samplename),'r')
+        #starcode.line=starcode.readlines()
+        #for line in starcode.line:
+            #connectionitem=line.split(sep='\t')[0]
+            #time=int(line.split(sep='\t')[1])
+            #cluster=line.split(sep='\t')[2]
+            #for member in cluster.split(sep=','):
+                #if member.strip('\n') not in uncorrected_rabie_barcodes:
+                    #uncorrected_rabie_barcodes.append(member.strip('\n'))
+            #if connectionitem.strip('\n') not in uncorrected_rabie_barcodes:
+                #uncorrected_rabie_barcodes.append(connectionitem.strip('\n'))
+        #starcode.close()
+        #uncorrected_quantification={}
+        #uncorrected_umi={}
+        #for values in uncorrected_rabie_barcodes:
+            #uncorrected_quantification[values]=0
+            #uncorrected_umi[values]=[]  
+        #file_matrix=pd.DataFrame(0,index=uncorrected_rabie_barcodes,columns=list(valid_cells))
+        #for read in ParseFastq(pathstofastqs=['%s_filtered.fastq'%(self.outputfile)]):
+            #cellname=read[0].split(' ')[1].split(':')
+            #cellname=cellname[0]+cellname[1]
+            #reads=read[1][0].strip('\n')
+            #umis=read[0].split(' ')[1].split(':')[2]
+            #if cellname in valid_cells:
+                #if reads in uncorrected_rabie_barcodes:
+                    #if uncorrected_umi not in uncorrected_umi[reads]:
+                        #file_matrix.loc[reads,cellname]+=1
+                        #uncorrected_umi[reads].append(umis)
+        #file_matrix.to_csv('%s.Uncorrected.connection.csv'%(self.outputfile), sep=',', encoding='utf-8')
         os.remove('%s_filtered.fastq'%(self.outputfile))
        
         

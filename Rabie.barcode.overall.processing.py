@@ -206,12 +206,219 @@ class Rabid_Barcode:
                         #uncorrected_umi[reads].append(umis)
         #file_matrix.to_csv('%s.Uncorrected.connection.csv'%(self.outputfile), sep=',', encoding='utf-8')
         os.remove('%s_filtered.fastq'%(self.outputfile))
-       
-        
-        
-        
-        
-        
+
+    def rarefactioncurve(self):
+        starcode=open('%s.clustering.results'%(self.samplename),'r')
+        starcode.line=starcode.readlines()
+        truebarcode={}
+        for line in starcode.line:
+            connectionitem=line.split(sep='\t')[0]
+            time=int(line.split(sep='\t')[1])
+            cluster=line.split(sep='\t')[2]
+            for member in cluster.split(sep=','):
+                truebarcode[member.strip('\n')]=connectionitem.strip('\n')
+        starcode.close()
+        rare_faction={1000:[],5000:[],
+        10000:[],50000:[],
+        100000:[],500000:[],
+        1000000:[]}
+        rare_faction_statistics={1000:[0,0,0,0,0],5000:[0,0,0,0,0],
+        10000:[0,0,0,0,0],50000:[0,0,0,0,0],
+        100000:[0,0,0,0,0],500000:[0,0,0,0,0],
+        1000000:[0,0,0,0,0]}#Total number of reads  number of reads number of reads with 5end handle    number of reads with 3end handle    number of reads with both handle    number of reads pass the structure filter
+        for read in ParseFastq([self.fastq]):
+            readid=read[0].strip('\n').split(' ')[0]
+            Rabieread=read[1][0].strip('\n')
+            if rare_faction_statistics[1000][0] < 1000:
+                random_selector=random.randint(1,101)
+                if random_selector <=50:
+                    rare_faction_statistics[1000][0]+=1
+                    if self.fiveendhandle in Rabieread and self.threeendhandle in Rabieread:
+                        realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.threeendhandle)]
+                        if re.match(self.pattern,realRabieread):
+                            rare_faction[1000].append(truebarcode[realRabieread])
+                            rare_faction_statistics[1000][3]+=1
+                            rare_faction_statistics[1000][4]+=1
+                    else:
+                        if self.fiveendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle)+28]
+                            if re.match(self.pattern,realRabieread):
+                                rare_faction[1000].append(truebarcode[realRabieread])
+                                rare_faction_statistics[1000][1]+=1
+                                rare_faction_statistics[1000][4]+=1
+                        elif self.threeendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.threeendhandle)-28:Rabieread.find(self.threeendhandle)]
+                            if re.match(self.pattern,realRabieread):
+                                rare_faction[1000].append(truebarcode[realRabieread])
+                                rare_faction_statistics[1000][2]+=1
+                                rare_faction_statistics[1000][4]+=1
+            if rare_faction_statistics[5000][0] < 5000:
+                random_selector=random.randint(1,101)
+                if random_selector <=50:
+                    rare_faction_statistics[5000][0]+=1
+                    if self.fiveendhandle in Rabieread and self.threeendhandle in Rabieread:
+                        realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.threeendhandle)]
+                        if re.match(self.pattern,realRabieread):
+                            rare_faction[5000].append(truebarcode[realRabieread])
+                            rare_faction_statistics[5000][3]+=1
+                            rare_faction_statistics[5000][4]+=1
+                    else:
+                        if self.fiveendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle)+28]
+                            if re.match(self.pattern,realRabieread):
+                                rare_faction[5000].append(truebarcode[realRabieread])
+                                rare_faction_statistics[5000][1]+=1
+                                rare_faction_statistics[5000][4]+=1
+                        elif self.threeendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.threeendhandle)-28:Rabieread.find(self.threeendhandle)]
+                            if re.match(self.pattern,realRabieread):
+                                rare_faction[5000].append(truebarcode[realRabieread])
+                                rare_faction_statistics[5000][2]+=1
+                                rare_faction_statistics[5000][4]+=1
+
+            if rare_faction_statistics[10000][0] < 10000:
+                random_selector=random.randint(1,101)
+                if random_selector <=50:
+                    rare_faction_statistics[10000][0]+=1
+                    if self.fiveendhandle in Rabieread and self.threeendhandle in Rabieread:
+                        realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.threeendhandle)]
+                        if re.match(self.pattern,realRabieread):
+                            rare_faction[10000].append(truebarcode[realRabieread])
+                            rare_faction_statistics[10000][3]+=1
+                            rare_faction_statistics[10000][4]+=1
+                    else:
+                        if self.fiveendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle)+28]
+                            if re.match(self.pattern,realRabieread):
+                                rare_faction[10000].append(truebarcode[realRabieread])
+                                rare_faction_statistics[10000][1]+=1
+                                rare_faction_statistics[10000][4]+=1
+                        elif self.threeendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.threeendhandle)-28:Rabieread.find(self.threeendhandle)]
+                            if re.match(self.pattern,realRabieread):
+                                rare_faction[10000].append(truebarcode[realRabieread])
+                                rare_faction_statistics[10000][2]+=1
+                                rare_faction_statistics[10000][4]+=1
+
+            if rare_faction_statistics[50000][0] < 50000:
+                random_selector=random.randint(1,101)
+                if random_selector <=50:
+                    rare_faction_statistics[50000][0]+=1
+                    if self.fiveendhandle in Rabieread and self.threeendhandle in Rabieread:
+                        realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.threeendhandle)]
+                        if re.match(self.pattern,realRabieread):
+                            rare_faction[50000].append(truebarcode[realRabieread])
+                            rare_faction_statistics[50000][3]+=1
+                            rare_faction_statistics[50000][4]+=1
+                    else:
+                        if self.fiveendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle)+28]
+                            if re.match(self.pattern,realRabieread):
+                                rare_faction[50000].append(truebarcode[realRabieread])
+                                rare_faction_statistics[50000][1]+=1
+                                rare_faction_statistics[50000][4]+=1
+                        elif self.threeendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.threeendhandle)-28:Rabieread.find(self.threeendhandle)]
+                            if re.match(self.pattern,realRabieread):
+                                rare_faction[50000].append(truebarcode[realRabieread])
+                                rare_faction_statistics[50000][2]+=1
+                                rare_faction_statistics[50000][4]+=1
+
+
+            if rare_faction_statistics[100000][0] < 100000:
+                random_selector=random.randint(1,101)
+                if random_selector <=50:
+                    rare_faction_statistics[100000][0]+=1
+                    if self.fiveendhandle in Rabieread and self.threeendhandle in Rabieread:
+                        realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.threeendhandle)]
+                        if re.match(self.pattern,realRabieread):
+                            rare_faction[100000].append(truebarcode[realRabieread])
+                            rare_faction_statistics[100000][3]+=1
+                            rare_faction_statistics[100000][4]+=1
+                    else:
+                        if self.fiveendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle)+28]
+                            if re.match(self.pattern,realRabieread):
+                                rare_faction[100000].append(truebarcode[realRabieread])
+                                rare_faction_statistics[100000][1]+=1
+                                rare_faction_statistics[100000][4]+=1
+                        elif self.threeendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.threeendhandle)-28:Rabieread.find(self.threeendhandle)]
+                            if re.match(self.pattern,realRabieread):
+                                rare_faction[100000].append(truebarcode[realRabieread])
+                                rare_faction_statistics[100000][2]+=1
+                                rare_faction_statistics[100000][4]+=1
+
+            if rare_faction_statistics[500000][0] < 500000:
+                random_selector=random.randint(1,101)
+                if random_selector <=50:
+                    rare_faction_statistics[500000][0]+=1
+                    if self.fiveendhandle in Rabieread and self.threeendhandle in Rabieread:
+                        realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.threeendhandle)]
+                        if re.match(self.pattern,realRabieread):
+                            rare_faction[500000].append(truebarcode[realRabieread])
+                            rare_faction_statistics[500000][3]+=1
+                            rare_faction_statistics[500000][4]+=1
+                    else:
+                        if self.fiveendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle)+28]
+                            if re.match(self.pattern,realRabieread):
+                                rare_faction[500000].append(truebarcode[realRabieread])
+                                rare_faction_statistics[500000][1]+=1
+                                rare_faction_statistics[500000][4]+=1
+                        elif self.threeendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.threeendhandle)-28:Rabieread.find(self.threeendhandle)]
+                            if re.match(self.pattern,realRabieread):
+                                rare_faction[500000].append(truebarcode[realRabieread])
+                                rare_faction_statistics[500000][2]+=1
+                                rare_faction_statistics[500000][4]+=1
+
+            if rare_faction_statistics[1000000][0] < 1000000:
+                random_selector=random.randint(1,101)
+                if random_selector <=50:
+                    rare_faction_statistics[1000000][0]+=1
+                    if self.fiveendhandle in Rabieread and self.threeendhandle in Rabieread:
+                        realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.threeendhandle)]
+                        if re.match(self.pattern,realRabieread):
+                            rare_faction[1000000].append(truebarcode[realRabieread])
+                            rare_faction_statistics[1000000][3]+=1
+                            rare_faction_statistics[1000000][4]+=1
+                    else:
+                        if self.fiveendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle)+28]
+                            if re.match(self.pattern,realRabieread):
+                                rare_faction[1000000].append(truebarcode[realRabieread])
+                                rare_faction_statistics[1000000][1]+=1
+                                rare_faction_statistics[1000000][4]+=1
+                        elif self.threeendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.threeendhandle)-28:Rabieread.find(self.threeendhandle)]
+                            if re.match(self.pattern,realRabieread):
+                                rare_faction[1000000].append(truebarcode[realRabieread])
+                                rare_faction_statistics[1000000][2]+=1
+                                rare_faction_statistics[1000000][4]+=1
+
+        with open('%s.rarefactioncurve.tsv'%(self.outputfile), "w", newline="") as csvfile:
+            writer=csv.writer(csvfile,delimiter='\t')
+            writer.writerow(['Number of reads','Unique sequences'])
+            for sampling in rare_faction:
+                writer.writerow([sampling,len(list(dict.fromkeys(rare_faction[sampling])))])
+        csvfile.close()
+        with open('%s.rarefactioncurve.statistics.tsv'%(self.outputfile), "w", newline="") as csvfile:
+            writer=csv.writer(csvfile,delimiter='\t')
+            writer.writerow(['Total number of reads','number of reads with 5end handle','number of reads with 3end handle','number of reads with both handle','number of reads pass the structure filter'])
+            for sampling in rare_faction_statistics:
+                writer.writerow([rare_faction_statistics[sampling][0],
+                rare_faction_statistics[sampling][1],
+                rare_faction_statistics[sampling][2],
+                rare_faction_statistics[sampling][3],
+                rare_faction_statistics[sampling][4]])
+        csvfile.close()
+        return 0
+
+
+
+
+
 if __name__=="__main__":
     samplelist=os.listdir('./')
     samplelist=[x for x in samplelist if '_STAR_Reads.fastq.gz' in x]

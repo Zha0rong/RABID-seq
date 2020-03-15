@@ -420,22 +420,6 @@ class Rabid_Barcode:
 
 
 if __name__=="__main__":
-    samplelist=os.listdir('./')
-    samplelist=[x for x in samplelist if '_STAR_Reads.fastq.gz' in x]
-    samplelist=[x.replace('_STAR_Reads.fastq.gz','') for x in samplelist]
-    for sample in samplelist:
-        Process=Rabid_Barcode('%s_STAR_Reads.fastq.gz'%(sample),sample)
-        Process.processing()
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    Process=Rabid_Barcode('S505_STAR_Reads.fastq.gz','S505')
+    Process.processing()
+    Process.rarefactioncurve()

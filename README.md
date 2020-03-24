@@ -1,56 +1,54 @@
 # Rabid-seq bioinformatics workflow
 
+
+
+
+
 ## Step 0: Convert paired end reads to a single fastq file
 ### Use inDrops script to convert a PE file with R1 cell barcode and R2 Rabies barcode, into a SE file containing cell barcode and UMI in the header and rabies barcode as the read.
+#### The read structure in this single fastq file will be:
+Read_ID CellBarcode_1:CellBarcode_2:UMI
+Sequence
++
+Quality of the Sequence
 
-```diff
--To do: The steps from raw data to SE fastq need to be outlined
-```
+## Step 1: Check for the handles and structures of the read in the fastq file
+### So first we check if the handles are in the reads, now:
+	If both handles are in the read, I get the 28 bases within the handles and use the regex pattern to check the structure, if the strucute matches the pattern in the regex,
+		write the filtered reads into the sample_filtered.fastq
+	else
+		if there are only 5 end handle, i selected 28 bases downstream to the 5 end handle, then use the regex pattern to check the structure and decide whether we should filter it
+		if there are only 3 end handle, i selected 28 bases upstream to the 3 end handle, then use the regex pattern to check the structure and decide whether we should filter it
+### Output at this stage: sample_filtered.fastq and sample_Cell_statistics.tsv
 
-## Step 1: Extract Rabies barcodes in fastq files
-### **Rabie.Barcode.processing.py**: processes all fastq files in folder, generating the following tables: 
+## Step 2: Use the starcode to cluster the reads from sample_filtered.fastq
+The hamming distance we used is 1.
+The output format is like this: 
+Cluster center sequence (correct barcode sequence) tab Number of reads in this cluster tab members sequences of cluster (the sequences that are only 1 hamming distance away from the cluster center).
+### Output at this stage: text file called sample.clustering.results
 
-```diff
--To do: usage for this script
-```
+## Step 3: Use the sample_filtered.fastq and sample.clustering.results to build the count matrix for the rabie barcode
+### At this stage, what we do first is to read in the sample.clustering.results: 
+	remove any cluster that only has 1 read.
+### Use the filtered.fastq, I correct the rabie barcode and count the number of reads belong to each barcode in each cell. (More specific mechanism in the code annotation)
 
-```python
-python Rabie.Barcode.processing.py [] [] []
+### Output at this stage: 
+Count Matrix: S505.connection.csv this is a count matrix similar to the transcriptome output.
+Count Table: S505.connection.ideal.format.csv this is the output that remove the 0s in the count matrix, the format is like this
+Cell	Rabie Barcode	Count
+Quantification statistics: S505_Cell_quantification_statistics.tsv this statistics shows how many reads per cell, and how many reads need to be corrected.
 
-```
-
-Output 1: Cell_statistics.tsv
-
-rabies barcode  | # with only correct 3' handle | # with only correct 5' handle | # with both handles | # with correct structure
---------------- | ------------------------------| ------------------------------| --------------------| --------------
-
-Currently we decide that any read that contains one handle (5' or 3') and the correct barcode structure is kept
-
-Output 2: cell.rabies.counts.tsv
-
-cell barcode  | rabies barcode  | counts
-------------- | ----------------| -----
-
-## Step 2: Error correct barcodes
-### **run.error.correction.py**
-
-```diff
--To do: usage for this script
--I think we will we want to add a normalization step based on number of reads
-```
-
-```python
-python run.error.correction.py [] [] []
-
-```
-
-Output: cell.rabies.corrected_counts.tsv
-
-cell barcode  | rabies barcode  | counts
-------------- | ----------------| -----
+## Step 4: Rarefaction curve
+### python function to generate data for rarefaction curve
+#### This step must only be run after step 2 has been run, since we need to use the clustering results in this process.
+This function will use Random Number Generator to subsample the fastq and check the number of unique rabie barcodes at different subsampling size.
+### Output at this stage: S505.rarefactioncurve.tsv A tsv file that has the following format:
+Number of reads	Unique sequences
+S505.rarefactioncurve.statistics.tsv A tsv file that shows how many reads has the handles and pass the filters.
 
 
-## Step 3: Visualize barcode distributions
+
+## Step 5: Visualize barcode distributions
 ### **viz.corrected.barcodes.R**
 
 ```diff
@@ -72,10 +70,6 @@ Cell_histogram.pdf shows # of cells per rabies barcodes
 Rabies_rannked.pdf shows the ranked abundance of rabies barcode counts per cell
 
 Cell_ranked.pdf shows the ranked abdundance of the number of cells per rabies barcode
-
-## Step 4: Rarefaction curve
-### **run.rarefaction.sh**
-#### This script subsamples the fastq files and determines the number error corrected barcodes. Plots are generated to determine if the library has been sequenced to sufficient depth
 
 ```shell
 # IDEA: This is a shell script that subsamples fastq and pipes to the full pipeline above. No need to rewrite the above processing steps

@@ -22,7 +22,7 @@ An example project.yaml file is provided in input/project.yaml
 #### The structure of the output table is: 
 Mouse_SampleID_Cellbarcode | Mouse_Rabiesbarcode | UMI counts
 ------------ | ------------- | --------------
-1_S501_A | 1_Rabiesbarcode | 29
+1_S505_AGACGAGGAGATGGCT	 | 1_ATGTATGTATCTTGCCGTATACATGCAG | 29
 
 ## Step 3: Perform rarefaction analysis of rabies barcodes
 #### Use the run_rarefaction.py script to perform a rarefaction analysis of the Rabies barcodes
@@ -39,44 +39,28 @@ Read depth | Unique Rabies barocdes
 .|.
 .|.
 
-## Step 4: Rarefaction curve
-### python function to generate data for rarefaction curve
-#### This step must only be run after step 2 has been run, since we need to use the clustering results in this process.
-This function will use Random Number Generator to subsample the fastq and check the number of unique rabie barcodes at different subsampling size.
-### Output at this stage: S505.rarefactioncurve.tsv A tsv file that has the following format:
-Number of reads	Unique sequences
-S505.rarefactioncurve.statistics.tsv A tsv file that shows how many reads has the handles and pass the filters.
+## Step 4: Generate the igraph network based from the output of Step 2 
+#### Use the run_rarefaction.R script to read filter Rabies barcodes and generate a network representation of the data
 
+	python indrops.py project.yaml quantify [--total-workers 1] [--worker-index 0]
+		[-l --libraries LIBRARIES] [-r --runs RUNS ]
+		[--min-reads 750] [--min-counts 0]
+		[--analysis prefix '']
+		[--no-bam]
 
-
-## Step 5: Visualize barcode distributions
-### **viz.corrected.barcodes.R**
-
-```diff
--Iain to modify this script to incorporate cell data once available
--To do: usage for this script
-```
-
-```R
-Rscript viz.corrected.barcodes.R 
-
-```
-
-Barcode_loss.pdf shows the number of correct barcodes over the extraction and correction process
-
-Rabies_histogram.pdf shows # of rabies barcodes per cell
-
-Cell_histogram.pdf shows # of cells per rabies barcodes
-
-Rabies_rannked.pdf shows the ranked abundance of rabies barcode counts per cell
-
-Cell_ranked.pdf shows the ranked abdundance of the number of cells per rabies barcode
-
-```shell
-# IDEA: This is a shell script that subsamples fastq and pipes to the full pipeline above. No need to rewrite the above processing steps
-run.rarefaction.sh
-
-```
-
-
-
+	# --min-reads INT :                                 Ignore barcodes with less than specified number of reads.
+	# --min-counts INT :                                Ignore output for barcodes with less than the specified number
+	#                                                   of UMIFM counts. This significantly speeds up
+	#                                                   downstream processing.
+	# --analysis-prefix STR :                           Prefix output data files with the specified prefix.
+	#                                                   (filename --> prefix.filename)
+	# --no-bam :                                        If specified, do not output and process BAM files. 
+	# 
+	# --libraries comma-separated list of libraries      If specified, step will be restricted to libraries
+	#                                                   in this list.
+	# --runs comma-separated list of runs               If specified, only align reads coming from these runs
+	#                                                   [This is an uncommon use case.]
+	# 
+	# 
+	# The resulting list of barcodes will be split among --total-workers, with worker identified by --worker-index.
+	#    *Note* This step requires ~2Gb of memory. 

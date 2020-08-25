@@ -10,36 +10,34 @@ An example project.yaml file is provided in input/project.yaml
       
 #### The read structure in this single fastq file will be:
 
-   Read_ID CellBarcode_1:RABIESBarcode_2:UMI
+   Read_ID Cellbarcode:Rabiesbarcode:UMI
    Sequence
    +
    Quality of the Sequence
 
-## Step 2: Extract, filter and correct Rabies barcodes
+## Step 2: Extract, filter, and correct Rabies barcodes
 #### Use the extract_rabies_barcodes.py to extract Rabies barcodes, perform structural filtering, and barcode error correction. Specify the mouse id using -m
 	python extract_rabies_barcodes.py -m 1
 	
 #### The structure of the output table is: 
-Mouse_SampleID_Cell_barcode | Mouse_Rabiesbarcode | UMI corrected Counts
+Mouse_SampleID_Cellbarcode | Mouse_Rabiesbarcode | UMI counts
 ------------ | ------------- | --------------
 1_S501_A | 1_Rabiesbarcode | 29
 
-## Step 2: Use the starcode to cluster the reads from sample_filtered.fastq
-The hamming distance we used is 1.
-The output format is like this: 
-Cluster center sequence (correct barcode sequence) tab Number of reads in this cluster tab members sequences of cluster (the sequences that are only 1 hamming distance away from the cluster center).
-### Output at this stage: text file called sample.clustering.results
+## Step 3: Perform rarefaction analysis of rabies barcodes
+#### Use the run_rarefaction.py script to perform a rarefaction analysis of the Rabies barcodes
 
-## Step 3: Use the sample_filtered.fastq and sample.clustering.results to build the count matrix for the rabie barcode
-### At this stage, what we do first is to read in the sample.clustering.results: 
-	remove any cluster that only has 1 read.
-### Use the filtered.fastq, I correct the rabie barcode and count the number of reads belong to each barcode in each cell. (More specific mechanism in the code annotation)
-
-### Output at this stage: 
-Count Matrix: S505.connection.csv this is a count matrix similar to the transcriptome output.
-Count Table: S505.connection.ideal.format.csv this is the output that remove the 0s in the count matrix, the format is like this
-Cell	Rabie Barcode	Count
-Quantification statistics: S505_Cell_quantification_statistics.tsv this statistics shows how many reads per cell, and how many reads need to be corrected.
+	python run_rarefaction.py -r1 read1.fastq -r2 read2.fastq
+	
+#### The structure of the output table is: 
+Read depth | Unique Rabies barocdes
+------------ | ------------- 
+1000 | 5000
+10000 | 50000
+100000 | 500000
+.|.
+.|.
+.|.
 
 ## Step 4: Rarefaction curve
 ### python function to generate data for rarefaction curve

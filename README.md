@@ -8,7 +8,7 @@ An example project.yaml file is provided in input/project.yaml
 
     python indrops.py project.yaml filter 
       
-#### The output, rabies_se.fastq, will be a single fastq file with the following structure
+#### The output (rabies_se.fastq) will be a single fastq file with the following structure
     
     Read_ID Cellbarcode:UMI  
     Rabiesbarcode  

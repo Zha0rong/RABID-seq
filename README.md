@@ -15,18 +15,24 @@ An example project.yaml file is provided in input/project.yaml
     +  
     Quality of the Sequence  
 
-## Step 2: Extract, filter, and correct Rabies barcodes
-#### Use the extract_rabies_barcodes.py to extract Rabies barcodes, perform structural filtering, and barcode error correction. Specify the mouse id using -m
+## Step 2: Extract, filter, and correct Rabies barcodes by mouse
+#### Use the extract_rabies_barcodes.py to extract Rabies barcodes, perform structural filtering, and barcode error correction. This script combines data by mouse by appending the mouse identification to avoid barcode collisions with the cell barcode and allow rabies connections within mice. 
 	
-	python extract_rabies_barcodes.py --in rabies_se.fastq -id S505
+	python extract_rabies_barcodes.py sample_sheet.csv
 
-	# -in STR :                              Path to the single end file produced by "indrops.py project.yaml filter"
-	# -id STR :                           	 A unique sample id. If left blank, sample index is used
-	
-#### The structure of the output table (rabies_se.table) is: 
-Cellbarcode       | Rabiesbarcode | UMI counts
------------------ | ------------- | --------------
-AGACGAGGAGATGGCT  | ATGTATGTATCTTGCCGTATACATGCAG | 29
+sample_sheet.csv must contain the following information
+
+File | Mouse | Sample ID
+-----|------ | ---------
+rabies_se1.fastq | 1 | S503
+rabies_se2.fastq | 1 | S504
+rabies_se3.fastq | 3 | S504
+
+#### The structure of the output (table.csv) is: 
+
+Mouse_SampleID_Cellbarcode | Mouse_Rabiesbarcode            | UMI counts
+-------------------------- | ------------------------------ | --------------
+1_S503_AGACGAGGAGATGGCT	   | 1_ATGTATGTATCTTGCCGTATACATGCAG | 29
 
 ## Step 3: Perform rarefaction analysis of rabies barcodes
 #### Use the run_rarefaction.py script to perform a rarefaction analysis of the Rabies barcodes
@@ -43,26 +49,8 @@ Read depth | Unique Rabies barocdes
 10000 | 50000
 100000 | 500000
 
-## Step 6: Combine data by mouse
-#### Use the combine_samples.R script to combine samples from each mouse
-	
-	Rscript combine_samples.R in table.csv
 
-table.csv must contain the following information
-
-File | Mouse | Sample ID
------|------ | ---------
-rabies_se1.table | 1 | S503
-rabies_se2.table | 1 | S504
-rabies_se3.table | 3 | S504
-
-The output looks like: 
-
-Mouse_SampleID_Cellbarcode | Mouse_Rabiesbarcode            | UMI counts
--------------------------- | ------------------------------ | --------------
-1_S503_AGACGAGGAGATGGCT	   | 1_ATGTATGTATCTTGCCGTATACATGCAG | 29
-
-## Step 5: Generate the igraph network 
+## Step 4: Generate the igraph network 
 #### Use the generate_network.R script to read filter Rabies barcodes and generate a network representation of the data from the output of Step 2 
 
 Example input data files can be found in the input/ folder
@@ -81,7 +69,7 @@ Example input data files can be found in the input/ folder
 	# --cell_color STR:                       Path to cell color file
 	# --cluster_color STR:                    Path to cluster color file
 
-## Step 6: Visualize the igraph network 
+## Step 5: Visualize the igraph network 
 #### Generate a graph-based representation of the network with celltypes as vertex colors
 
 Example input data files can be found in the input/ folder

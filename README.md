@@ -2,7 +2,7 @@
 
 ## Step 1: Convert paired end reads to a single fastq file
 
-### Use inDrops script to convert a PE file with R1 cell barcode and R2 Rabies barcode, into a SE file containing cell barcode and UMI in the header and rabies barcode as the read.
+#### Use inDrops script to convert a PE file with R1 cell barcode and R2 Rabies barcode, into a SE file containing cell barcode and UMI in the header and rabies barcode as the read.
 
 An example project.yaml file is provided in input/project.yaml 
 
@@ -15,14 +15,12 @@ Sequence
 +
 Quality of the Sequence
 
-## Step 1: Check for the handles and structures of the read in the fastq file
-### So first we check if the handles are in the reads, now:
-	If both handles are in the read, I get the 28 bases within the handles and use the regex pattern to check the structure, if the strucute matches the pattern in the regex,
-		write the filtered reads into the sample_filtered.fastq
-	else
-		if there are only 5 end handle, i selected 28 bases downstream to the 5 end handle, then use the regex pattern to check the structure and decide whether we should filter it
-		if there are only 3 end handle, i selected 28 bases upstream to the 3 end handle, then use the regex pattern to check the structure and decide whether we should filter it
-### Output at this stage: sample_filtered.fastq and sample_Cell_statistics.tsv
+## Step 2: Extract, filter and correct Rabies barcodes
+#### So first we check if the handles are in the reads, now:
+	python extract_rabies_barcodes.py -mouse 1
+	
+#### The structure of the output table is: 
+1_Index_Cellbarocde 	\t 	1_Rabiesbarcode \t Counts
 
 ## Step 2: Use the starcode to cluster the reads from sample_filtered.fastq
 The hamming distance we used is 1.

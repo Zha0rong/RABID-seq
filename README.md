@@ -39,28 +39,22 @@ Read depth | Unique Rabies barocdes
 .|.
 .|.
 
-## Step 4: Generate the igraph network based from the output of Step 2 
-#### Use the run_rarefaction.R script to read filter Rabies barcodes and generate a network representation of the data
+## Step 4: Generate the igraph network 
+#### Use the generate_network.R script to read filter Rabies barcodes and generate a network representation of the data from the output of Step 2 
 
-	python indrops.py project.yaml quantify [--total-workers 1] [--worker-index 0]
-		[-l --libraries LIBRARIES] [-r --runs RUNS ]
-		[--min-reads 750] [--min-counts 0]
-		[--analysis prefix '']
-		[--no-bam]
+Example input data files can be found in the input/ folder
 
-	# --min-reads INT :                                 Ignore barcodes with less than specified number of reads.
-	# --min-counts INT :                                Ignore output for barcodes with less than the specified number
-	#                                                   of UMIFM counts. This significantly speeds up
-	#                                                   downstream processing.
-	# --analysis-prefix STR :                           Prefix output data files with the specified prefix.
-	#                                                   (filename --> prefix.filename)
-	# --no-bam :                                        If specified, do not output and process BAM files. 
-	# 
-	# --libraries comma-separated list of libraries      If specified, step will be restricted to libraries
-	#                                                   in this list.
-	# --runs comma-separated list of runs               If specified, only align reads coming from these runs
-	#                                                   [This is an uncommon use case.]
-	# 
-	# 
-	# The resulting list of barcodes will be split among --total-workers, with worker identified by --worker-index.
-	#    *Note* This step requires ~2Gb of memory. 
+	Rscript generate_network.R [--in table.csv] 
+		[--out network.RData]
+		[--meta metadata.csv]
+		[--RNA rna_counts.csv] 
+		[--cell_color cell_colors.csv]
+		[--cluster_color cluster_colors.csv]
+
+	# --in STR :                              path to csv produced in step 2
+	# --out STR :                             path to R object containing the network 
+	# --meta STR :                            path to csv containing cell metadata
+	# --RNA STR:                              path to transcriptome data
+	# --cell_color STR:                       path to cell color file
+	# --cluster_color STR:                    path to cluster color file
+

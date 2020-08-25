@@ -12,7 +12,10 @@
     project.yaml
     read1.fastq 
     read2.fastq
+    
     sample_sheet.csv
+    table.csv
+    
     network.RData
     metadata.csv
     rna_counts.csv

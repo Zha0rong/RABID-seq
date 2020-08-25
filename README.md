@@ -1,17 +1,13 @@
 # RABID-seq bioinformatics pipeline
 
 ## Step 1: Convert paired end reads to a single fastq file
-### Required packages
-The package requires
-
-Python 2.7 (with the packages numpy, scipy, matplotlib, pysam>0.9.0, pyyaml, pyfasta). [See Appendix 2]
-RSEM (1.2.19+)
-Bowtie (1.1.1+)
-samtools (1.3.1+) [See Appendix 3] *This specific version is needed to account for a BAM-format oddity in RSEM output.
 
 ### Use inDrops script to convert a PE file with R1 cell barcode and R2 Rabies barcode, into a SE file containing cell barcode and UMI in the header and rabies barcode as the read.
 
+An example project.yaml file is provided in input/project.yaml 
 
+python indrops.py project.yaml filter 
+      
 #### The read structure in this single fastq file will be:
 
 Read_ID CellBarcode_1:RABIESBarcode_2:UMI

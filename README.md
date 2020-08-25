@@ -6,7 +6,7 @@
 
 An example project.yaml file is provided in input/project.yaml 
 
-python indrops.py project.yaml filter 
+    python indrops.py project.yaml filter 
       
 #### The read structure in this single fastq file will be:
 

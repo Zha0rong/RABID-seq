@@ -20,7 +20,9 @@ Quality of the Sequence
 	python extract_rabies_barcodes.py -m 1
 	
 #### The structure of the output table is: 
-1_Index_Cellbarocde 	\t 	1_Rabiesbarcode \t Counts
+Mouse_SampleID_Cell_barcode | Mouse_Rabiesbarcode | UMI corrected Counts
+------------ | ------------- | --------------
+1_S501_A | 1_Rabiesbarcode | 29
 
 ## Step 2: Use the starcode to cluster the reads from sample_filtered.fastq
 The hamming distance we used is 1.

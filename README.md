@@ -16,8 +16,8 @@ Sequence
 Quality of the Sequence
 
 ## Step 2: Extract, filter and correct Rabies barcodes
-#### So first we check if the handles are in the reads, now:
-	python extract_rabies_barcodes.py -mouse 1
+#### Use the extract_rabies_barcodes.py to extract Rabies barcodes, perform structural filtering, and barcode error correction. Specify the mouse id using -m
+	python extract_rabies_barcodes.py -m 1
 	
 #### The structure of the output table is: 
 1_Index_Cellbarocde 	\t 	1_Rabiesbarcode \t Counts

@@ -1,5 +1,24 @@
 # RABID-seq bioinformatics pipeline
 
+## Scripts used in this pipeline
+    indrops.py (https://github.com/indrops/indrops)
+    extract_rabies_barcodes.py 
+    run_rarefaction.py
+    generate_network.R
+    viz_network.R
+    
+## Example input files are found in input/
+
+    project.yaml
+    read1.fastq 
+    read2.fastq
+    sample_sheet.csv
+    network.RData
+    metadata.csv
+    rna_counts.csv
+    cell_colors.csv
+    cluster_colors.csv
+
 ## Step 1: Convert paired end reads to a single fastq file
 
 #### Use inDrops script to convert a PE file with R1 cell barcode and R2 Rabies barcode, into a SE file containing cell barcode and UMI in the header and rabies barcode as the read.

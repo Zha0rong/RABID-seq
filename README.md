@@ -10,10 +10,10 @@ An example project.yaml file is provided in input/project.yaml
       
 #### The read structure in this single fastq file will be:
 
-Read_ID CellBarcode_1:RABIESBarcode_2:UMI
-Sequence
-+
-Quality of the Sequence
+   Read_ID CellBarcode_1:RABIESBarcode_2:UMI
+   Sequence
+   +
+   Quality of the Sequence
 
 ## Step 2: Extract, filter and correct Rabies barcodes
 #### Use the extract_rabies_barcodes.py to extract Rabies barcodes, perform structural filtering, and barcode error correction. Specify the mouse id using -m

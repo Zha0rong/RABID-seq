@@ -18,23 +18,23 @@ An example project.yaml file is provided in input/project.yaml
 ## Step 2: Extract, filter, and correct Rabies barcodes
 #### Use the extract_rabies_barcodes.py to extract Rabies barcodes, perform structural filtering, and barcode error correction. Specify the mouse id using -m
 	
-	python extract_rabies_barcodes.py --in rabies_se.fastq --mouse 1
+	python extract_rabies_barcodes.py --in rabies_se.fastq -id S505
 
-	# -in STR :                              path to the single end file produced by "indrops.py project.yaml filter"
-	# -mouse INT :                           a unique integer representing the mouse id
+	# -in STR :                              Path to the single end file produced by "indrops.py project.yaml filter"
+	# -id STR :                           	 A unique sample id. If left blank, sample index is used
 	
 #### The structure of the output table is: 
 Mouse_SampleID_Cellbarcode | Mouse_Rabiesbarcode | UMI counts
 ------------ | ------------- | --------------
-1_S505_AGACGAGGAGATGGCT	 | 1_ATGTATGTATCTTGCCGTATACATGCAG | 29
+AGACGAGGAGATGGCT	 | ATGTATGTATCTTGCCGTATACATGCAG | 29
 
 ## Step 3: Perform rarefaction analysis of rabies barcodes
 #### Use the run_rarefaction.py script to perform a rarefaction analysis of the Rabies barcodes
 
 	python run_rarefaction.py -1 read1.fastq -2 read2.fastq
 	
-	# -1 STR :                             path to unprocessed read1.fastq (same as used by indrops.py project.yaml filter)
-	# -2 STR :                             path to unprocessed read2.fastq (same as used by indrops.py project.yaml filter)
+	# -1 STR :                             Path to unprocessed read1.fastq (same as used by indrops.py project.yaml filter)
+	# -2 STR :                             Path to unprocessed read2.fastq (same as used by indrops.py project.yaml filter)
 	
 #### The structure of the output table is: 
 Read depth | Unique Rabies barocdes
@@ -46,7 +46,20 @@ Read depth | Unique Rabies barocdes
 .|.
 .|.
 
-## Step 4: Generate the igraph network 
+
+## Step 6: Combine data by mouse
+#### Use the combine_samples.R script to combine samples from each mouse
+	
+	Rscript combine_samples.R in table.csv
+
+table.csv must contain the following information
+
+File | Mouse | Sample ID
+-----|------ | ---------
+
+
+
+## Step 5: Generate the igraph network 
 #### Use the generate_network.R script to read filter Rabies barcodes and generate a network representation of the data from the output of Step 2 
 
 Example input data files can be found in the input/ folder
@@ -58,14 +71,14 @@ Example input data files can be found in the input/ folder
 		[--cell_color cell_colors.csv]
 		[--cluster_color cluster_colors.csv]
 
-	# --in STR :                              path to csv produced in step 2
-	# --out STR :                             path to R object containing the network 
-	# --meta STR :                            path to csv containing cell metadata
-	# --RNA STR:                              path to transcriptome data
-	# --cell_color STR:                       path to cell color file
-	# --cluster_color STR:                    path to cluster color file
+	# --in STR :                              Path to csv produced in step 2
+	# --out STR :                             Path to R object containing the network 
+	# --meta STR :                            Path to csv containing cell metadata
+	# --RNA STR:                              Path to transcriptome data
+	# --cell_color STR:                       Path to cell color file
+	# --cluster_color STR:                    Path to cluster color file
 
-## Step 5: Visualize the igraph network 
+## Step 6: Visualize the igraph network 
 #### Generate a graph-based representation of the network with celltypes as vertex colors
 
 Example input data files can be found in the input/ folder

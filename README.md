@@ -33,6 +33,9 @@ Mouse_SampleID_Cellbarcode | Mouse_Rabiesbarcode | UMI counts
 
 	python run_rarefaction.py -1 read1.fastq -2 read2.fastq
 	
+	# -1 STR :                             path to unprocessed read1.fastq (same as used by indrops.py project.yaml filter)
+	# -2 STR :                             path to unprocessed read2.fastq (same as used by indrops.py project.yaml filter)
+	
 #### The structure of the output table is: 
 Read depth | Unique Rabies barocdes
 ------------ | ------------- 

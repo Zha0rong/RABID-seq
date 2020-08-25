@@ -9,6 +9,7 @@ An example project.yaml file is provided in input/project.yaml
     python indrops.py project.yaml filter 
       
 #### The output, rabies_se.fastq, will be a single fastq file with the following structure
+    
     Read_ID Cellbarcode:UMI  
     Rabiesbarcode  
     +  
@@ -16,7 +17,11 @@ An example project.yaml file is provided in input/project.yaml
 
 ## Step 2: Extract, filter, and correct Rabies barcodes
 #### Use the extract_rabies_barcodes.py to extract Rabies barcodes, perform structural filtering, and barcode error correction. Specify the mouse id using -m
-	python extract_rabies_barcodes.py -f rabies_se.fastq -m 1
+	
+	python extract_rabies_barcodes.py --in rabies_se.fastq --mouse 1
+
+	# -in STR :                              path to the single end file produced by "indrops.py project.yaml filter"
+	# -mouse INT :                           a unique integer representing the mouse id
 	
 #### The structure of the output table is: 
 Mouse_SampleID_Cellbarcode | Mouse_Rabiesbarcode | UMI counts
@@ -26,7 +31,7 @@ Mouse_SampleID_Cellbarcode | Mouse_Rabiesbarcode | UMI counts
 ## Step 3: Perform rarefaction analysis of rabies barcodes
 #### Use the run_rarefaction.py script to perform a rarefaction analysis of the Rabies barcodes
 
-	python run_rarefaction.py -r1 read1.fastq -r2 read2.fastq
+	python run_rarefaction.py -1 read1.fastq -2 read2.fastq
 	
 #### The structure of the output table is: 
 Read depth | Unique Rabies barocdes

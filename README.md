@@ -19,8 +19,6 @@ Sequence
 +
 Quality of the Sequence
 
-
-
 ## Step 1: Check for the handles and structures of the read in the fastq file
 ### So first we check if the handles are in the reads, now:
 	If both handles are in the read, I get the 28 bases within the handles and use the regex pattern to check the structure, if the strucute matches the pattern in the regex,

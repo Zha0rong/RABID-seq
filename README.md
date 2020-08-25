@@ -23,10 +23,10 @@ An example project.yaml file is provided in input/project.yaml
 	# -in STR :                              Path to the single end file produced by "indrops.py project.yaml filter"
 	# -id STR :                           	 A unique sample id. If left blank, sample index is used
 	
-#### The structure of the output table is: 
-Mouse_SampleID_Cellbarcode | Mouse_Rabiesbarcode | UMI counts
------------- | ------------- | --------------
-AGACGAGGAGATGGCT	 | ATGTATGTATCTTGCCGTATACATGCAG | 29
+#### The structure of the output table (rabies_se.table) is: 
+Cellbarcode       | Rabiesbarcode | UMI counts
+----------------- | ------------- | --------------
+AGACGAGGAGATGGCT  | ATGTATGTATCTTGCCGTATACATGCAG | 29
 
 ## Step 3: Perform rarefaction analysis of rabies barcodes
 #### Use the run_rarefaction.py script to perform a rarefaction analysis of the Rabies barcodes
@@ -42,10 +42,6 @@ Read depth | Unique Rabies barocdes
 1000 | 5000
 10000 | 50000
 100000 | 500000
-.|.
-.|.
-.|.
-
 
 ## Step 6: Combine data by mouse
 #### Use the combine_samples.R script to combine samples from each mouse
@@ -56,8 +52,15 @@ table.csv must contain the following information
 
 File | Mouse | Sample ID
 -----|------ | ---------
+rabies_se1.table | 1 | S503
+rabies_se2.table | 1 | S504
+rabies_se3.table | 3 | S504
 
+The output looks like: 
 
+Mouse_SampleID_Cellbarcode | Mouse_Rabiesbarcode            | UMI counts
+-------------------------- | ------------------------------ | --------------
+1_S503_AGACGAGGAGATGGCT	   | 1_ATGTATGTATCTTGCCGTATACATGCAG | 29
 
 ## Step 5: Generate the igraph network 
 #### Use the generate_network.R script to read filter Rabies barcodes and generate a network representation of the data from the output of Step 2 

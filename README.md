@@ -24,7 +24,7 @@
 
 ## Step 1: Convert paired end reads to a single fastq file
 
-#### Use inDrops script to convert a PE file with R1 cell barcode and R2 Rabies barcode, into a SE file containing cell barcode and UMI in the header and rabies barcode as the read.
+#### Use inDrops script to convert a PE file with R1 cell barcode and R2 Rabies barcode into a SE file containing cell barcode and UMI in the header and rabies barcode as the read.
 
 An example project.yaml file is provided in input/project.yaml 
 
@@ -65,7 +65,7 @@ Mouse_SampleID_Cellbarcode | Mouse_Rabiesbarcode            | UMI counts
 	# -2 STR :                             Path to unprocessed read2.fastq (same as used by indrops.py project.yaml filter)
 	
 #### The structure of the output table is: 
-Read depth | Unique Rabies barocdes
+Read depth | Unique Rabies barcodes
 ------------ | ------------- 
 1000 | 5000
 10000 | 50000

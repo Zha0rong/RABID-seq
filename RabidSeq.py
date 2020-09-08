@@ -12,6 +12,19 @@ import re
 import bz2
 import argparse
 
+parser = argparse.ArgumentParser(prog = "Rabid Seq pipeline",usage="RNAseq pipeline.")
+
+
+
+parser.add_argument("--quantify_from_inDrop_fastq_files",dest='quantify_from_inDrop_fastq_files',action="store_true",help='Quantify from 3 inDrop files')
+parser.add_argument("--quantify_from_filtered_fastq_files",dest='quantify_from_filtered_fastq_files',action="store_true",help='Quantify from 1 inDrop fastq files')
+
+parser.add_argument('-R1','--Cellbarcode1',dest='Cellbarcode1',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv)
+parser.add_argument('-R2','--Cellbarcode2andUMI',dest='Cellbarcode2andUMI',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv)
+parser.add_argument('-R3','--Read',dest='Read',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv or "--quantify_from_filtered_fastq_files" in sys.argv)
+parser.add_argument('-o','--output',dest='outputdirectory',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv or "--quantify_from_filtered_fastq_files" in sys.argv)
+parser.add_argument('-n','--name',dest='name',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv or "--quantify_from_filtered_fastq_files" in sys.argv)
+
 
 
 class Rabid_Seq_Processor:
@@ -203,9 +216,9 @@ class Rabid_Seq_Processor:
                     if UMI not in umi_list[Rabid_correction_database[reads]]:
                         file_matrix.loc[Rabid_correction_database[reads],CELLNAME]+=1
                         umi_list[Rabid_correction_database[reads]].append(UMI)
-        with open('%s/%s.connection.ideal.format.csv'%(self.outputdirectory,self.samplename), "w", newline="") as csvfile:
+        with open('%s/%s.table.csv'%(self.outputdirectory,self.samplename), "w", newline="") as csvfile:
             writer=csv.writer(csvfile,delimiter='\t')
-            writer.writerow(['Cellname','Rabie','Counts'])
+            writer.writerow(['Cellname','Rabid','Counts'])
             for i in range(len(valid_cells)):
                 for j in range(len(Rabid)):
                     if file_matrix.loc[Rabid[j],valid_cells[i]]!=0:
@@ -213,15 +226,14 @@ class Rabid_Seq_Processor:
         csvfile.close()
 
 
-
-
-
 if __name__=="__main__":
-    a=Rabid_Seq_Processor('input/S509_GAGTAGCC_barcode1.fastq.gz',
-                          'input/S509_GAGTAGCC_barcode2.fastq.gz',
-                          'input/S509_GAGTAGCC_read.fastq.gz',
-                          'S509_GAGTAGCC',
-                          'output/')
-    a.Extract_and_Filtering()
-    a.Clustering()
-    a.Correction_and_generate_table()
+    options, arg = parser.parse_known_args()
+    if options.quantify_from_inDrop_fastq_files:
+        process=Rabid_Seq_Processor(options.Cellbarcode1,
+                          options.Cellbarcode2andUMI,
+                          options.Read,
+                          options.name,
+                          options.outputdirectory)
+        process.Extract_and_Filtering()
+        process.Clustering()
+        process.Correction_and_generate_table()

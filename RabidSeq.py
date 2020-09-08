@@ -46,16 +46,16 @@ class Rabid_Seq_Processor:
         self.Read = Read
         self.samplename = samplename
         self.outputdirectory = outputdirectory
-        if os.path.isdir(self.outputdirectory) is False:
-            sys.exit('RabidSeq pipeline exiting, the output directory does not exist')
-        if os.path.isfile(self.CB1) is False:
-            sys.exit('RabidSeq pipeline exiting, the CB1 fastq file does not exist')
-        if os.path.isfile(self.CB2_UMI) is False:
-            sys.exit('RabidSeq pipeline exiting, the CB2+UMI fastq file does not exist')
-        if os.path.isfile(self.Read) is False:
-            sys.exit('RabidSeq pipeline exiting, the Read fastq file does not exist')
-        if self.CB1.endswith('.gz') and self.CB2_UMI.endswith('.gz') and self.Read.endswith('.gz') is False:
-            sys.exit('RabidSeq pipeline exiting, the fastq files needs to be gzipped (Update supporting other format coming soon).')
+        #if os.path.isdir(self.outputdirectory) is False:
+            #sys.exit('RabidSeq pipeline exiting, the output directory does not exist')
+        #if os.path.isfile(self.CB1) is False:
+            #sys.exit('RabidSeq pipeline exiting, the CB1 fastq file does not exist')
+        #if os.path.isfile(self.CB2_UMI) is False:
+            #sys.exit('RabidSeq pipeline exiting, the CB2+UMI fastq file does not exist')
+        #if os.path.isfile(self.Read) is False:
+            #sys.exit('RabidSeq pipeline exiting, the Read fastq file does not exist')
+        #if self.CB1.endswith('.gz') and self.CB2_UMI.endswith('.gz') and self.Read.endswith('.gz') is False:
+            #sys.exit('RabidSeq pipeline exiting, the fastq files needs to be gzipped (Update supporting other format coming soon).')
 
     def _write_fastq(self,file, ID, seq, quality_score):
         file.write('%s\n' % ID)
@@ -229,6 +229,16 @@ class Rabid_Seq_Processor:
 if __name__=="__main__":
     options, arg = parser.parse_known_args()
     if options.quantify_from_inDrop_fastq_files:
+        if os.path.isdir(options.outputdirectory) is False:
+            sys.exit('RabidSeq pipeline exiting, the output directory does not exist')
+        if os.path.isfile(options.Cellbarcode1) is False:
+            sys.exit('RabidSeq pipeline exiting, the CB1 fastq file does not exist')
+        if os.path.isfile(options.Cellbarcode2andUMI) is False:
+            sys.exit('RabidSeq pipeline exiting, the CB2+UMI fastq file does not exist')
+        if os.path.isfile(options.Read) is False:
+            sys.exit('RabidSeq pipeline exiting, the Read fastq file does not exist')
+        if options.Cellbarcode1.endswith('.gz') and options.Cellbarcode2andUMI.endswith('.gz') and options.Read.endswith('.gz') is False:
+            sys.exit('RabidSeq pipeline exiting, the fastq files needs to be gzipped (Update supporting other format coming soon).')
         process=Rabid_Seq_Processor(options.Cellbarcode1,
                           options.Cellbarcode2andUMI,
                           options.Read,

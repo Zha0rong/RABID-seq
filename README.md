@@ -26,9 +26,10 @@
 
 ### Figuring out what you have in hands.
     The first thing one needs to know before using the pipeline is what input he/she is having in hands. It is likely that you have one of these types of input:
-	   1. 3 fastq files for 1 sample. The inDrop sequencing data include 3 fastq files: 1 file which includes the Cellbarcode 1 (8 bp), 1 file which includes Cellbarcode2 + UMI (14 bp) and one file which includes RNA read (varied length).
+	   1. 3 fastq files for 1 sample. The inDrop sequencing data include 3 fastq files: 
+	         1 file which includes the Cellbarcode 1 (8 bp), 1 file which includes Cellbarcode2 + UMI (14 bp) and one file which includes RNA read (varied length).
 	      This type of data will be referred as 'Raw' in later description.
-		  Caution: Before you decide that your data type is 'Raw', make sure that the names of files do not start with 'Undetermined'. If the names start with undetermined that means the data is not demultiplexed, and you may want to use the [inDrop pipeline](https://github.com/indrops/indrops).
+              Caution: Before you decide that your data type is 'Raw', make sure that the names of files do not start with 'Undetermined'. If the names start with undetermined                 that means the data is not demultiplexed, and you may want to use the [inDrop pipeline](https://github.com/indrops/indrops).
 	   2. 1 fastq file for 1 sample. This means that you have an output file from 
 	
 ## Step 1: Convert paired end reads to a single fastq file

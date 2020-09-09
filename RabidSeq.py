@@ -16,8 +16,8 @@ parser = argparse.ArgumentParser(prog = "Rabid Seq pipeline",usage="RNAseq pipel
 
 
 
-parser.add_argument("--quantify_from_inDrop_fastq_files",dest='quantify_from_inDrop_fastq_files',action="store_true",help='Quantify from 3 inDrop files')
-parser.add_argument("--quantify_from_filtered_fastq_files",dest='quantify_from_filtered_fastq_files',action="store_true",help='Quantify from 1 inDrop fastq files')
+parser.add_argument("--quantify_from_inDrop_raw_fastq_files",dest='quantify_from_inDrop_fastq_files',action="store_true",help='Quantify from 3 inDrop files')
+parser.add_argument("--quantify_from_inDrop_demultiplexed_fastq_files",dest='quantify_from_filtered_fastq_files',action="store_true",help='Quantify from 1 inDrop fastq files')
 
 parser.add_argument('-R1','--Cellbarcode1',dest='Cellbarcode1',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv)
 parser.add_argument('-R2','--Cellbarcode2andUMI',dest='Cellbarcode2andUMI',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv)
@@ -83,8 +83,11 @@ class Rabid_Seq_Processor:
                break
         for read in Allfiles:
             read.close()
-    def _Parse_filtered_fastq(self):
-        fastq = ['%s/%s_filtered.fastq' % (self.outputdirectory,self.samplename)]
+    def _Parse_filtered_fastq(self,filtered_fastq=None):
+        if filtered_fastq is None:
+             fastq = ['%s/%s_filtered.fastq' % (self.outputdirectory, self.samplename)]
+        else:
+            fastq=[filtered_fastq]
         fastq = [open(files) for files in fastq]
         while True:
             try:
@@ -181,9 +184,104 @@ class Rabid_Seq_Processor:
             for cell in self.cell_information.keys():
                 writer.writerow([cell,self.cell_information[cell][0],self.cell_information[cell][1],self.cell_information[cell][2],self.cell_information[cell][3],self.cell_information[cell][4]])
         csvfile.close()
+    def Filtering_from_filtered_fastq(self):
+        outputfile = open('%s/%s_filtered.fastq' % (self.outputdirectory,self.samplename), 'wt')
+        for read in self._Parse_filtered_fastq(filtered_fastq=self.Read):
+            name=read[0]
+            CellBarcode1=read[0].split(sep=' ')[1].split(sep=':')[0]
+            CellBarcode2=read[0].split(sep=' ')[1].split(sep=':')[1]
+            Rabid_sequence=read[1][0]
+            Rabid_sequence_quality=read[2][0]
+            cellname=CellBarcode1+CellBarcode2
+            if cellname in self.cell_information.keys():
+                self.cell_information[cellname][0] += 1
+                if self.fiveendhandle in Rabid_sequence and self.threeendhandle in Rabid_sequence:
+                    self.cell_information[cellname][3] += 1
+                    realRabieread = Rabid_sequence[
+                                    Rabid_sequence.find(self.fiveendhandle) + len(
+                                        self.fiveendhandle):Rabid_sequence.find(
+                                        self.threeendhandle)]
+                    realQualityScore = Rabid_sequence_quality[
+                                       Rabid_sequence.find(self.fiveendhandle) + len(
+                                           self.fiveendhandle):Rabid_sequence.find(
+                                           self.threeendhandle)]
+                    if re.match(self.pattern, realRabieread):
+                        self.cell_information[cellname][4] += 1
+                        self._write_fastq(outputfile, name, realRabieread, realQualityScore)
+                else:
+                    if self.fiveendhandle in Rabid_sequence:
+                        self.cell_information[cellname][1] += 1
+                        realRabieread = Rabid_sequence[
+                                        Rabid_sequence.find(self.fiveendhandle) + len(
+                                            self.fiveendhandle):Rabid_sequence.find(
+                                            self.fiveendhandle) + len(self.fiveendhandle) + 28]
+                        realQualityScore = Rabid_sequence_quality[
+                                           Rabid_sequence.find(self.fiveendhandle) + len(
+                                               self.fiveendhandle):Rabid_sequence.find(
+                                               self.fiveendhandle) + len(self.fiveendhandle) + 28]
+                        if re.match(self.pattern, realRabieread):
+                            self.cell_information[cellname][4] += 1
+                            self._write_fastq(outputfile, name, realRabieread, realQualityScore)
+                    elif self.threeendhandle in Rabid_sequence:
+                        self.cell_information[cellname][2] += 1
+                        realRabieread = Rabid_sequence[
+                                        Rabid_sequence.find(self.threeendhandle) - 28:Rabid_sequence.find(
+                                            self.threeendhandle)]
+                        realQualityScore = Rabid_sequence_quality[
+                                           Rabid_sequence.find(self.threeendhandle) - 28:Rabid_sequence.find(
+                                               self.threeendhandle)]
+                        if re.match(self.pattern, realRabieread):
+                            self.cell_information[cellname][4] += 1
+                            self._write_fastq(outputfile, name, realRabieread, realQualityScore)
+            else:
+                self.cell_information[cellname] = [0, 0, 0, 0, 0]
+                self.cell_information[cellname][0] += 1
+                if self.fiveendhandle in Rabid_sequence and self.threeendhandle in Rabid_sequence:
+                    self.cell_information[cellname][3] += 1
+                    realRabieread = Rabid_sequence[Rabid_sequence.find(self.fiveendhandle) + len(
+                        self.fiveendhandle):Rabid_sequence.find(self.threeendhandle)]
+                    realQualityScore = Rabid_sequence_quality[Rabid_sequence.find(self.fiveendhandle) + len(
+                        self.fiveendhandle):Rabid_sequence.find(self.threeendhandle)]
+                    if re.match(self.pattern, realRabieread):
+                        self.cell_information[cellname][4] += 1
+                        self._write_fastq(outputfile, name, realRabieread, realQualityScore)
+                else:
+                    if self.fiveendhandle in Rabid_sequence:
+                        self.cell_information[cellname][1] += 1
+                        realRabieread = Rabid_sequence[Rabid_sequence.find(self.fiveendhandle) + len(
+                            self.fiveendhandle):Rabid_sequence.find(self.fiveendhandle) + len(self.fiveendhandle) + 28]
+                        realQualityScore = Rabid_sequence_quality[Rabid_sequence.find(self.fiveendhandle) + len(
+                            self.fiveendhandle):Rabid_sequence.find(self.fiveendhandle) + len(self.fiveendhandle) + 28]
+                        if re.match(self.pattern, realRabieread):
+                            self.cell_information[cellname][4] += 1
+                            self._write_fastq(outputfile, name, realRabieread, realQualityScore)
+                    elif self.threeendhandle in Rabid_sequence:
+                        self.cell_information[cellname][2] += 1
+                        realRabieread = Rabid_sequence[
+                                        Rabid_sequence.find(self.threeendhandle) - 28:Rabid_sequence.find(
+                                            self.threeendhandle)]
+                        realQualityScore = Rabid_sequence_quality[
+                                           Rabid_sequence.find(self.threeendhandle) - 28:Rabid_sequence.find(
+                                               self.threeendhandle)]
+                        if re.match(self.pattern, realRabieread):
+                            self.cell_information[cellname][4] += 1
+                            self._write_fastq(outputfile, name, realRabieread, realQualityScore)
+        outputfile.close()
+        with open('%s/%s_Cell_statistics.tsv' % (self.outputdirectory, self.samplename), "w", newline="") as csvfile:
+            writer = csv.writer(csvfile, delimiter='\t')
+            writer.writerow(
+                ['Cellname', 'number of reads', 'number of reads with 5end handle', 'number of reads with 3end handle',
+                 'number of reads with both handle',
+                 'number of reads pass the structure filter'])  # number of reads, number of reads with both handle, number of reads pass the structure filter
+            for cell in self.cell_information.keys():
+                writer.writerow([cell, self.cell_information[cell][0], self.cell_information[cell][1],
+                                 self.cell_information[cell][2], self.cell_information[cell][3],
+                                 self.cell_information[cell][4]])
+        csvfile.close()
+
     def Clustering(self,distance=1):
         os.system(
-            '/data/quintanalab/software/starcode-1.3/starcode --print-clusters --dist %s -i %s/%s_filtered.fastq -o %s/%s.clustering.results' % (
+            'starcode --print-clusters --dist %s -i %s/%s_filtered.fastq -o %s/%s.clustering.results' % (
             str(distance),self.outputdirectory, self.samplename,self.outputdirectory, self.samplename))
     def Correction_and_generate_table(self):
         if os.path.isfile('%s/%s.clustering.results'%(self.outputdirectory, self.samplename)) is False:
@@ -228,7 +326,7 @@ class Rabid_Seq_Processor:
 
 if __name__=="__main__":
     options, arg = parser.parse_known_args()
-    if options.quantify_from_inDrop_fastq_files:
+    if options.quantify_from_inDrop_raw_fastq_files:
         if os.path.isdir(options.outputdirectory) is False:
             sys.exit('RabidSeq pipeline exiting, the output directory does not exist')
         if os.path.isfile(options.Cellbarcode1) is False:
@@ -245,5 +343,18 @@ if __name__=="__main__":
                           options.name,
                           options.outputdirectory)
         process.Extract_and_Filtering()
+        process.Clustering()
+        process.Correction_and_generate_table()
+    if options.quantify_from_inDrop_demultiplexed_fastq_files:
+        if os.path.isdir(options.outputdirectory) is False:
+            sys.exit('RabidSeq pipeline exiting, the output directory does not exist')
+        if os.path.isfile(options.Read) is False:
+            sys.exit('RabidSeq pipeline exiting, the Read fastq file does not exist')
+        process=Rabid_Seq_Processor('',
+                          '',
+                          options.Read,
+                          options.name,
+                          options.outputdirectory)
+        process.Filtering_from_filtered_fastq()
         process.Clustering()
         process.Correction_and_generate_table()

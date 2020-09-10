@@ -24,7 +24,7 @@ parser.add_argument('-R2','--Cellbarcode2andUMI',dest='Cellbarcode2andUMI',actio
 parser.add_argument('-R3','--Read',dest='Read',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv or "--quantify_from_filtered_fastq_files" in sys.argv)
 parser.add_argument('-o','--output',dest='outputdirectory',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv or "--quantify_from_filtered_fastq_files" in sys.argv)
 parser.add_argument('-n','--name',dest='name',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv or "--quantify_from_filtered_fastq_files" in sys.argv)
-
+parser.add_argument('-l','--levenshtein',dest='distance',action='store',default=1)
 
 
 class Rabid_Seq_Processor:
@@ -40,12 +40,14 @@ class Rabid_Seq_Processor:
     pattern = '[AGC][ACT][AGT][GCT][ACG][ACT][AGT][GCT]AT[AGC][ACT][AGT][GCT][ACG][ACT][AGT][GCT]AT[AGC][ACT][AGT][GCT][ACG][ACT][AGT][GCT]'
     cell_information = {}  # Cellname:[number of reads,number of reads with 5end handle,number of reads with 3end handle, number of reads with both handle, number of reads pass the structure filter]
     whitelist = {}
-    def __init__(self,CB1,CB2_UMI,Read,samplename,outputdirectory):
+    distance=0
+    def __init__(self,CB1,CB2_UMI,Read,samplename,outputdirectory,distance):
         self.CB1=CB1
         self.CB2_UMI=CB2_UMI
         self.Read = Read
         self.samplename = samplename
         self.outputdirectory = outputdirectory
+        self.distance=distance
         #if os.path.isdir(self.outputdirectory) is False:
             #sys.exit('RabidSeq pipeline exiting, the output directory does not exist')
         #if os.path.isfile(self.CB1) is False:
@@ -91,10 +93,10 @@ class Rabid_Seq_Processor:
         fastq = [open(files) for files in fastq]
         while True:
             try:
-                names = [next(read).decode('UTF-8').strip('\n') for read in fastq]
-                Sequence = [next(read).decode('UTF-8').strip('\n') for read in fastq]
-                Blank = [next(read).decode('UTF-8').strip('\n') for read in fastq]
-                qualityscore = [next(read).decode('UTF-8').strip('\n') for read in fastq]
+                names = [next(read).strip('\n') for read in fastq]
+                Sequence = [next(read).strip('\n') for read in fastq]
+                Blank = [next(read).strip('\n') for read in fastq]
+                qualityscore = [next(read).strip('\n') for read in fastq]
                 assert all(name.strip('\n') == names[0].strip('\n') for name in names)
                 if names:
                     try:
@@ -279,7 +281,8 @@ class Rabid_Seq_Processor:
                                  self.cell_information[cell][4]])
         csvfile.close()
 
-    def Clustering(self,distance=1):
+    def Clustering(self):
+        distance=self.distance
         os.system(
             'starcode --print-clusters --dist %s -i %s/%s_filtered.fastq -o %s/%s.clustering.results' % (
             str(distance),self.outputdirectory, self.samplename,self.outputdirectory, self.samplename))
@@ -326,7 +329,7 @@ class Rabid_Seq_Processor:
 
 if __name__=="__main__":
     options, arg = parser.parse_known_args()
-    if options.quantify_from_inDrop_raw_fastq_files:
+    if options.quantify_from_inDrop_fastq_files:
         if os.path.isdir(options.outputdirectory) is False:
             sys.exit('RabidSeq pipeline exiting, the output directory does not exist')
         if os.path.isfile(options.Cellbarcode1) is False:
@@ -337,24 +340,26 @@ if __name__=="__main__":
             sys.exit('RabidSeq pipeline exiting, the Read fastq file does not exist')
         if options.Cellbarcode1.endswith('.gz') and options.Cellbarcode2andUMI.endswith('.gz') and options.Read.endswith('.gz') is False:
             sys.exit('RabidSeq pipeline exiting, the fastq files needs to be gzipped (Update supporting other format coming soon).')
-        process=Rabid_Seq_Processor(options.Cellbarcode1,
-                          options.Cellbarcode2andUMI,
-                          options.Read,
-                          options.name,
-                          options.outputdirectory)
+        process=Rabid_Seq_Processor(CB1=options.Cellbarcode1,
+                                    CB2_UMI=options.Cellbarcode2andUMI,
+                                    Read=options.Read,
+                                    samplename=options.name,
+                                    outputdirectory=options.outputdirectory,
+                                    distance=options.distance)
         process.Extract_and_Filtering()
         process.Clustering()
         process.Correction_and_generate_table()
-    if options.quantify_from_inDrop_demultiplexed_fastq_files:
+    if options.quantify_from_filtered_fastq_files:
         if os.path.isdir(options.outputdirectory) is False:
             sys.exit('RabidSeq pipeline exiting, the output directory does not exist')
         if os.path.isfile(options.Read) is False:
             sys.exit('RabidSeq pipeline exiting, the Read fastq file does not exist')
-        process=Rabid_Seq_Processor('',
-                          '',
-                          options.Read,
-                          options.name,
-                          options.outputdirectory)
+        process=Rabid_Seq_Processor(CB1='',
+                                    CB2_UMI='',
+                                    Read=options.Read,
+                                    samplename=options.name,
+                                    outputdirectory=options.outputdirectory,
+                                    distance=options.distance)
         process.Filtering_from_filtered_fastq()
         process.Clustering()
         process.Correction_and_generate_table()

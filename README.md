@@ -79,48 +79,47 @@ For Filtered data type (1 fastq file):
 
 
 
-#### Use inDrops script to convert a PE file with R1 cell barcode and R2 Rabies barcode into a SE file containing cell barcode and UMI in the header and rabies barcode as the read.
+~~#### Use inDrops script to convert a PE file with R1 cell barcode and R2 Rabies barcode into a SE file containing cell barcode and UMI in the header and rabies barcode as the read.
 
-An example project.yaml file is provided in input/project.yaml 
+~~An example project.yaml file is provided in input/project.yaml 
 
-    python indrops.py project.yaml filter 
+~~python indrops.py project.yaml filter 
       
-#### The output (rabies_se.fastq) will be a single fastq file with the following structure
+~~#### The output (rabies_se.fastq) will be a single fastq file with the following structure
     
-    Read_ID Cellbarcode:UMI  
-    Rabiesbarcode  
-    +  
-    Quality of the Sequence  
+~~Read_ID Cellbarcode:UMI  
+~~Rabiesbarcode  
+~~+  
+~~Quality of the Sequence  
 
-## Step 2: Extract, filter, and correct Rabies barcodes by mouse
-#### Use the extract_rabies_barcodes.py to extract Rabies barcodes, perform structural filtering, and barcode error correction. This script combines data by mouse by appending the mouse identification to avoid barcode collisions with the cell barcode and allow rabies connections within mice. 
+~~## Step 2: Extract, filter, and correct Rabies barcodes by mouse
+~~#### Use the extract_rabies_barcodes.py to extract Rabies barcodes, perform structural filtering, and barcode error correction. This script combines data by mouse by appending ~~the mouse identification to avoid barcode collisions with the cell barcode and allow rabies connections within mice. 
 	
-	python extract_rabies_barcodes.py sample_sheet.csv
+~~python extract_rabies_barcodes.py sample_sheet.csv
 
-sample_sheet.csv must contain the following information
+s~~ample_sheet.csv must contain the following information
 
-File | Mouse | Sample ID
------|------ | ---------
-rabies_se1.fastq | 1 | S503
-rabies_se2.fastq | 1 | S504
-rabies_se3.fastq | 3 | S504
+~~File | Mouse | Sample ID
+~-----|------ | ---------
+~~rabies_se1.fastq | 1 | S503
+~~rabies_se2.fastq | 1 | S504
+~~rabies_se3.fastq | 3 | S504
 
-#### The structure of the output (table.csv) is: 
+~~#### The structure of the output (table.csv) is: 
 
-Mouse_SampleID_Cellbarcode | Mouse_Rabiesbarcode            | UMI counts
--------------------------- | ------------------------------ | --------------
-1_S503_AGACGAGGAGATGGCT	   | 1_ATGTATGTATCTTGCCGTATACATGCAG | 29
+~~Mouse_SampleID_Cellbarcode | Mouse_Rabiesbarcode            | UMI counts
+~-------------------------- | ------------------------------ | --------------
+~1_S503_AGACGAGGAGATGGCT	   | 1_ATGTATGTATCTTGCCGTATACATGCAG | 29
 
-## Step 3: Perform rarefaction analysis of rabies barcodes
-#### Use the run_rarefaction.py script to perform a rarefaction analysis of the Rabies barcodes
-
-	python run_rarefaction.py -1 read1.fastq -2 read2.fastq
+~~## Step 3: Perform rarefaction analysis of rabies barcodes
+~#### Use the run_rarefaction.py script to perform a rarefaction analysis of the Rabies barcodes
+~python run_rarefaction.py -1 read1.fastq -2 read2.fastq
 	
-	# -1 STR :                             Path to unprocessed read1.fastq (same as used by indrops.py project.yaml filter)
-	# -2 STR :                             Path to unprocessed read2.fastq (same as used by indrops.py project.yaml filter)
+~~# -1 STR :                             Path to unprocessed read1.fastq (same as used by indrops.py project.yaml filter)
+~# -2 STR :                             Path to unprocessed read2.fastq (same as used by indrops.py project.yaml filter)
 	
-#### The structure of the output table is: 
-Read depth | Unique Rabies barcodes
+~~#### The structure of the output table is: 
+~Read depth | Unique Rabies barcodes
 ------------ | ------------- 
 1000 | 5000
 10000 | 50000

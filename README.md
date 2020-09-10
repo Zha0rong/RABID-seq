@@ -80,10 +80,10 @@ If there are more than 1 sample per 'sample', which means that you have multiple
 
 We have prepared two templates here for this task, one for Raw data type and one for Filtered data type.
 
-Suppose that we have sample A, B and C and they are from one large 'sample'. If you want to determine the connection of cells between different samples. Here is the sample sheet
+Suppose that we have sample A, B and C and they are from one large 'sample'. If you want to determine the connection of cells between different samples. Here is the sample sheet that you need to have as input. One template is prepared in the repository.
 
 |Read1|Read2|Read3|Overall Sample Name|Individual Sample Name|
-|:-----------:|:-----------:|:-----------:|:-----------------:|:--------------------:|
+|:---:|:---:|:---:|:---:|:---:|
 |A_R1.fastq.gz|A_R2.fastq.gz|A_R3.fastq.gz|Overall_sample1|A|
 |B_R1.fastq.gz|B_R2.fastq.gz|B_R3.fastq.gz|Overall_sample1|B|
 |C_R1.fastq.gz|C_R2.fastq.gz|C_R3.fastq.gz|Overall_sample1|C|

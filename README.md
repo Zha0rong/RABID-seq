@@ -8,18 +8,18 @@
 
 ## Example input files are found in input/
 
-    ~~project.yaml~~
-    ~~read1.fastq~~ 
-    ~~read2.fastq~~
+~~project.yaml~~
+~~read1.fastq~~ 
+~~read2.fastq~~
     
-    ~~sample_sheet.csv~~
-    ~~table.csv~~
+~~sample_sheet.csv~~
+~~table.csv~~
     
-    ~~network.RData~~
-    ~~metadata.csv~~
-    ~~rna_counts.csv~~
-    ~~cell_colors.csv~~
-    ~~cluster_colors.csv~~
+~~network.RData~~
+~~metadata.csv~~
+~~rna_counts.csv~~
+~~cell_colors.csv~~
+~~cluster_colors.csv~~
 
 
 ## Starting analyzing the Rabid-Seq data.
@@ -42,7 +42,17 @@ This type of data will be referred as 'Filtered' in later description.
 ### Function: quantifying Rabid-seq data.
 Just like any other type of single cell rna-seq data, we need to do quantify read for each cell before proceeding to any kind of analysis.
 
-
+For Raw data type:
+    python RabidSeq --quantify_from_inDrop_raw_fastq_files [options] -R1 Cellbarcode1.fastq.gz (8bp Cellbarcode 1) -R2 Cellbarcode2andUMI.fastq.gz (8bp Cellbarcode2 and 6bp UMI) -R3 Read.fastq.gz -o outputdirectory/ -n outputname 
+    Explanation:
+       -R1 the name of fastq file that includes the 8bp Cellbarcode 1 (Make sure to include full directory if not in the same directory as script).
+       -R2 the name of fastq file that includes the 8bp Cellbarcode 2 and 6bp UMI.
+       -R3 the name of fastq file that includes the Read.
+       -o the output directory, which will store the output files of the results.
+       -n the name of the output. The name will be added to the results files as a prefix.
+       [option]
+       -l the levenshtein distance. The distance is used to correct the Rabid barcode sequencing error. The default distance is 1.
+For 
 
 
 

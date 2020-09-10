@@ -15,11 +15,11 @@
 ~~sample_sheet.csv~~
 ~~table.csv~~
     
-~~network.RData~~
-~~metadata.csv~~
-~~rna_counts.csv~~
-~~cell_colors.csv~~
-~~cluster_colors.csv~~
+network.RData
+metadata.csv
+rna_counts.csv
+cell_colors.csv
+cluster_colors.csv
 
 
 ## Starting analyzing the Rabid-Seq data.

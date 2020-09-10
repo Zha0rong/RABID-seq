@@ -82,11 +82,12 @@ We have prepared two templates here for this task, one for Raw data type and one
 
 For Raw Data Type:
 
-	|Read 1|Read 2|Read 3|Overall Sample Name|Individual Sample Name|
-	|------|------|------|-------------------|----------------------|
-	|A_R1.fastq.gz|A_R2.fastq.gz|A_R3.fastq.gz|Overall_sample1|A|
-	|B_R1.fastq.gz|B_R2.fastq.gz|B_R3.fastq.gz|Overall_sample1|B|
-	|C_R1.fastq.gz|C_R2.fastq.gz|C_R3.fastq.gz|Overall_sample1|C|
+	|Read 1       |Read 2       |Read 3       |Overall Sample Name|Individual Sample Name|
+	|-------------|-------------|-------------|-------------------|----------------------|
+	|A_R1.fastq.gz|A_R2.fastq.gz|A_R3.fastq.gz|Overall_sample1    |A                     |
+	|B_R1.fastq.gz|B_R2.fastq.gz|B_R3.fastq.gz|Overall_sample1    |B                     |
+	|C_R1.fastq.gz|C_R2.fastq.gz|C_R3.fastq.gz|Overall_sample1    |C                     |
+	
 
 
 

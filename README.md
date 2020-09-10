@@ -50,7 +50,7 @@ This type of data will be referred as 'Filtered' in later description.
 
 Just like any other type of single cell rna-seq data, we need to do quantify read for each cell before proceeding to any kind of analysis.
 
-For Raw data type:
+For Raw data type (3 fastq files):
 
     python RabidSeq --quantify_from_inDrop_raw_fastq_files [options] -R1 Cellbarcode1.fastq.gz (8bp Cellbarcode 1) -R2 Cellbarcode2andUMI.fastq.gz (8bp Cellbarcode2 and 6bp UMI) -R3 Read.fastq.gz -o outputdirectory/ -n outputname 
     Explanation:
@@ -61,7 +61,15 @@ For Raw data type:
        -n the name of the output. The name will be added to the results files as a prefix.
        [option]
        -l the levenshtein distance. The distance is used to correct the Rabid barcode sequencing error. The default distance is 1.
-For 
+
+For Filtered data type (1 fastq file):
+    python RabidSeq --quantify_from_inDrop_demultiplexed_fastq_files -R3 Read.fastq.gz -o outputdirectory/ -n outputname 
+    Explanation:
+       -R3 the name of fastq file that includes the Read. The cell barcode and umi information are already included in the fastq file
+       -o the output directory, which will store the output files of the results.
+       -n the name of the output. The name will be added to the results files as a prefix.
+       [option]
+       -l the levenshtein distance. The distance is used to correct the Rabid barcode sequencing error. The default distance is 1.
 
 
 

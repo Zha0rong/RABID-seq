@@ -91,7 +91,7 @@ Suppose that we have sample A, B and C and they are from one large 'sample'. If 
 If you have filtered data type for the samples, here is the sample sheet that you need to have as input. One template is prepared in the repository.
 
 |Read3|Overall Sample Name|Individual Sample Name|
-|:---:|:---:|:---:|:---:|
+|:---:|:---:|:---:|
 |A_R3.fastq.gz|Overall_sample1|A|
 |B_R3.fastq.gz|Overall_sample1|B|
 |C_R3.fastq.gz|Overall_sample1|C|

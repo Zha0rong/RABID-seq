@@ -63,6 +63,7 @@ For Raw data type (3 fastq files):
        -l the levenshtein distance. The distance is used to correct the Rabid barcode sequencing error. The default distance is 1.
 
 For Filtered data type (1 fastq file):
+
     python RabidSeq --quantify_from_inDrop_demultiplexed_fastq_files -R3 Read.fastq.gz -o outputdirectory/ -n outputname 
     Explanation:
        -R3 the name of fastq file that includes the Read. The cell barcode and umi information are already included in the fastq file

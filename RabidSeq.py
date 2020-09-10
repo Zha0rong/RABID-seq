@@ -40,7 +40,7 @@ class Rabid_Seq_Processor:
     pattern = '[AGC][ACT][AGT][GCT][ACG][ACT][AGT][GCT]AT[AGC][ACT][AGT][GCT][ACG][ACT][AGT][GCT]AT[AGC][ACT][AGT][GCT][ACG][ACT][AGT][GCT]'
     cell_information = {}  # Cellname:[number of reads,number of reads with 5end handle,number of reads with 3end handle, number of reads with both handle, number of reads pass the structure filter]
     whitelist = {}
-    distance=0
+    distance=1
     def __init__(self,CB1,CB2_UMI,Read,samplename,outputdirectory,distance):
         self.CB1=CB1
         self.CB2_UMI=CB2_UMI

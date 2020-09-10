@@ -76,7 +76,7 @@ For Filtered data type (1 fastq file):
 
 In our publication for each mouse we have prepared more than 1 sample, and our data shows that the Rabid-seq allows us to find connection between cells in different samples.
 
-If there are more than 1 sample per 'sample', which means that you have multiple samples and you are interested in how the cells in these samples are connected to each other, you need to use an tab-delimited csv sheets which included the name of the overall sample, the names of individual samples and the input files.
+If there are more than 1 sample per 'sample', which means that you have multiple samples and you are interested in how the cells in these samples are connected to each other, you need to use an coma-delimited csv sheet which included the name of the overall sample, the names of individual samples and the input files.
 
 We have prepared two templates here for this task, one for Raw data type and one for Filtered data type.
 

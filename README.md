@@ -49,7 +49,7 @@ This type of data will be referred as 'Filtered' in later description.
 ### Step 1: quantifying Rabid-seq data.
 
 Just like any other type of single cell rna-seq data, we need to do quantify read for each cell before proceeding to any kind of analysis.
-
+#### If there is just one sample per 'sample'...
 For Raw data type (3 fastq files):
 
     python RabidSeq --quantify_from_inDrop_raw_fastq_files [options] -R1 Cellbarcode1.fastq.gz (8bp Cellbarcode 1) -R2 Cellbarcode2andUMI.fastq.gz (8bp Cellbarcode2 and 6bp UMI) -R3 Read.fastq.gz -o outputdirectory/ -n outputname 
@@ -72,9 +72,25 @@ For Filtered data type (1 fastq file):
        [option]
        -l the levenshtein distance. The distance is used to correct the Rabid barcode sequencing error. The default distance is 1.
 
+#### If there are more than one sample per 'sample'...
+
+In our publication for each mouse we have prepared more than 1 sample, and our data shows that the Rabid-seq allows us to find connection between cells in different samples.
+
+If there are more than 1 sample per 'sample', which means that you have multiple samples and you are interested in how the cells in these samples are connected to each other, you need to use an tab-delimited csv sheets which included the name of the overall sample, the names of individual samples and the input files.
+
+We have prepared two templates here for this task, one for Raw data type and one for Filtered data type.
+
+For Raw Data Type:
+
+	|Read 1|Read 2|Read 3|Overall Sample Name|Individual Sample Name|
+	|------|------|------|-------------------|----------------------|
+	|A_R1.fastq.gz|A_R2.fastq.gz|A_R3.fastq.gz|Overall_sample1|A|
+	|B_R1.fastq.gz|B_R2.fastq.gz|B_R3.fastq.gz|Overall_sample1|B|
+	|C_R1.fastq.gz|C_R2.fastq.gz|C_R3.fastq.gz|Overall_sample1|C|
 
 
-## Step 2: Generate the igraph network 
+
+### Step 2: Generate the igraph network 
 #### Use the generate_network.R script to read filter Rabies barcodes and generate a network representation of the data from the output of Step 2 
 
 Example input data files can be found in the input/ folder
@@ -93,7 +109,7 @@ Example input data files can be found in the input/ folder
 	# --cell_color STR:                       Path to cell color file
 	# --cluster_color STR:                    Path to cluster color file
 
-## Step 3: Visualize the igraph network 
+### Step 3: Visualize the igraph network 
 #### Generate a graph-based representation of the network with celltypes as vertex colors
 
 Example input data files can be found in the input/ folder

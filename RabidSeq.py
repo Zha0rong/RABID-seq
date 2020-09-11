@@ -18,12 +18,20 @@ parser = argparse.ArgumentParser(prog = "Rabid Seq pipeline",usage="RNAseq pipel
 
 parser.add_argument("--quantify_from_inDrop_raw_fastq_files",dest='quantify_from_inDrop_fastq_files',action="store_true",help='Quantify from 3 inDrop files')
 parser.add_argument("--quantify_from_inDrop_demultiplexed_fastq_files",dest='quantify_from_filtered_fastq_files',action="store_true",help='Quantify from 1 inDrop fastq files')
+parser.add_argument("--quantify_from_multiple_samples",dest='quantify_from_multiple_samples',action="store_true",help='Quantify from multiple samples.')
 
 parser.add_argument('-R1','--Cellbarcode1',dest='Cellbarcode1',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv)
 parser.add_argument('-R2','--Cellbarcode2andUMI',dest='Cellbarcode2andUMI',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv)
-parser.add_argument('-R3','--Read',dest='Read',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv or "--quantify_from_filtered_fastq_files" in sys.argv)
-parser.add_argument('-o','--output',dest='outputdirectory',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv or "--quantify_from_filtered_fastq_files" in sys.argv)
-parser.add_argument('-n','--name',dest='name',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv or "--quantify_from_filtered_fastq_files" in sys.argv)
+parser.add_argument('-R3','--Read',dest='Read',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv
+                                                                       or "--quantify_from_filtered_fastq_files" in sys.argv)
+parser.add_argument('-o','--output',dest='outputdirectory',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv
+                                                                                   or "--quantify_from_filtered_fastq_files" in sys.argv
+                    or "--quantify_from_multiple_samples" in sys.argv)
+parser.add_argument('-n','--name',dest='name',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv
+                                                                      or "--quantify_from_filtered_fastq_files" in sys.argv
+                    or "--quantify_from_multiple_samples" in sys.argv)
+parser.add_argument('-s','--sheet',dest='sheet',action="store",required="--quantify_from_multiple_samples" in sys.argv)
+
 parser.add_argument('-l','--levenshtein',dest='distance',action='store',default=1)
 
 
@@ -40,7 +48,7 @@ class Rabid_Seq_Processor:
     pattern = '[AGC][ACT][AGT][GCT][ACG][ACT][AGT][GCT]AT[AGC][ACT][AGT][GCT][ACG][ACT][AGT][GCT]AT[AGC][ACT][AGT][GCT][ACG][ACT][AGT][GCT]'
     cell_information = {}  # Cellname:[number of reads,number of reads with 5end handle,number of reads with 3end handle, number of reads with both handle, number of reads pass the structure filter]
     whitelist = {}
-    distance=1
+    distance=0
     def __init__(self,CB1,CB2_UMI,Read,samplename,outputdirectory,distance):
         self.CB1=CB1
         self.CB2_UMI=CB2_UMI
@@ -326,6 +334,77 @@ class Rabid_Seq_Processor:
                         writer.writerow([valid_cells[i],Rabid[j],file_matrix.loc[Rabid[j],valid_cells[i]]])
         csvfile.close()
 
+class multi_Rabid_Seq_Processer:
+    Overall_sample_name=''
+    Individual_sample={}
+    output_dir=''
+    datatype='' '''Raw or Filterd'''
+    distance=1
+    def ParseFastq(self,CB1,CB2,Read):
+        Allfiles=[CB1,CB2,Read]
+        Allfiles = [gzip.open(files) for files in Allfiles]
+        while True:
+            try:
+                names = [next(read).decode('UTF-8').split(' ')[0].strip('\n') for read in Allfiles]
+                Sequence = [next(read).decode('UTF-8').strip('\n') for read in Allfiles]
+                Blank = [next(read).decode('UTF-8').strip('\n') for read in Allfiles]
+                qualityscore = [next(read).decode('UTF-8').strip('\n') for read in Allfiles]
+                assert all(name.strip('\n') == names[0].strip('\n') for name in names)
+                if names:
+                    try:
+                        yield [names[0].split(' ')[0], Sequence, qualityscore]
+                    except:
+                        return
+                else:
+                    break
+            except StopIteration:
+               break
+        for read in Allfiles:
+            read.close()
+    def Parse_filtered_fastq(self,filtered_fastq):
+        fastq=[filtered_fastq]
+        fastq = [open(files) for files in fastq]
+        while True:
+            try:
+                names = [next(read).strip('\n') for read in fastq]
+                Sequence = [next(read).strip('\n') for read in fastq]
+                Blank = [next(read).strip('\n') for read in fastq]
+                qualityscore = [next(read).strip('\n') for read in fastq]
+                assert all(name.strip('\n') == names[0].strip('\n') for name in names)
+                if names:
+                    try:
+                        yield [names[0], Sequence, qualityscore]
+                    except:
+                        return
+                else:
+                    break
+            except StopIteration:
+               break
+        for read in fastq:
+            read.close()
+
+    def __init__(self,sample_sheet,outputdir,Overall_sample_name,distance):
+        self.output_dir=outputdir
+        sample_info=pd.read_csv(sample_sheet,sep=',')
+        if 'Read1' in list(sample_info.columns) and 'Read2' in list(sample_info.columns):
+            self.datatype='Raw'
+        else:
+            self.datatype='Filtered'
+        sample_set=list(sample_info['Individual_Sample_Name'])
+        self.distance=distance
+        self.Overall_sample_name=Overall_sample_name
+        for sample in sample_set:
+            R1=list(sample_info.loc[sample_info['Individual_Sample_Name']==sample,"Read1"])[0]
+            R2=list(sample_info.loc[sample_info['Individual_Sample_Name']==sample,"Read2"])[0]
+            R3=list(sample_info.loc[sample_info['Individual_Sample_Name']==sample,"Read3"])[0]
+            self.Individual_sample[sample]=[R1,R2,R3]
+        print(self.Individual_sample)
+        print(self.Overall_sample_name)
+
+    def Extract_Filtering(self):
+        return 0
+
+
 
 if __name__=="__main__":
     options, arg = parser.parse_known_args()
@@ -363,3 +442,12 @@ if __name__=="__main__":
         process.Filtering_from_filtered_fastq()
         process.Clustering()
         process.Correction_and_generate_table()
+    if options.quantify_from_multiple_samples:
+        if os.path.isdir(options.outputdirectory) is False:
+            sys.exit('RabidSeq pipeline exiting, the output directory does not exist')
+        if os.path.isfile(options.sheet) is False:
+            sys.exit('RabidSeq pipeline exiting, the sample sheet file does not exist')
+        process=multi_Rabid_Seq_Processer(sample_sheet=options.sheet,
+                                          outputdir=options.outputdirectory,
+                                          Overall_sample_name=options.name,
+                                          distance=options.distance)

@@ -109,9 +109,9 @@ This will be an intermediate file generated during the pipeline. Feel free to de
 This will be the cell statistics during the filtering step. The format will look like the table below.
 
 |Cellname|number of reads|number of reads with 5end handle|number of reads with 3end handle|number of reads with both handle|number of reads pass the structure filter|
-|:===:|:===:|:===:|:===:|:===:|:===:|
+|:---:|:---:|:---:|:---:|:---:|:---:|
 |CTGTGACCAGCGCCTT*|310871|13985|7695|280917|268786|
-
+|...|...|...|...|...|...|
 
 
 

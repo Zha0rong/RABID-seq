@@ -82,7 +82,7 @@ We have prepared two templates here for this task, one for Raw data type and one
 
 Suppose that we have sample A, B and C and they are from one large 'sample'. If you want to determine the connection of cells between different samples. Here is the sample sheet that you need to have as input. One template is prepared in the repository.
 
-|Read1|Read2|Read3|Overall Sample Name|Individual Sample Name|
+|Read1|Read2|Read3|Overall_Sample_Name|Individual_Sample_Name|
 |:---:|:---:|:---:|:---:|:---:|
 |A_R1.fastq.gz|A_R2.fastq.gz|A_R3.fastq.gz|Overall_sample1|A|
 |B_R1.fastq.gz|B_R2.fastq.gz|B_R3.fastq.gz|Overall_sample1|B|
@@ -90,7 +90,7 @@ Suppose that we have sample A, B and C and they are from one large 'sample'. If 
 
 If you have filtered data type for the samples, here is the sample sheet that you need to have as input. One template is prepared in the repository.
 
-|Read3|Overall Sample Name|Individual Sample Name|
+|Read3|Overall_Sample_Name|Individual_Sample_Name|
 |:---:|:---:|:---:|
 |A_R3.fastq.gz|Overall_sample1|A|
 |B_R3.fastq.gz|Overall_sample1|B|
@@ -98,7 +98,7 @@ If you have filtered data type for the samples, here is the sample sheet that yo
 
 #### Output of Quanfitying step
 
-There will be 4 output files from the Quantifying step.
+There will be 4 output files from the Quantifying step. You only need the samplename.table.csv in the next step to generate igraph network. 
 
 ##### outputname_filtered.fastq
 
@@ -108,12 +108,24 @@ This will be an intermediate file generated during the pipeline. Feel free to de
 
 This will be the cell statistics during the filtering step. The format will look like the table below.
 
-|Cellname|number of reads|number of reads with 5end handle|number of reads with 3end handle|number of reads with both handle|number of reads pass the structure filter|
+|Cellname*|number of reads|number of reads with 5end handle|number of reads with 3end handle|number of reads with both handle|number of reads pass the structure filter|
 |:---:|:---:|:---:|:---:|:---:|:---:|
-|CTGTGACCAGCGCCTT*|310871|13985|7695|280917|268786|
+|CTGTGACCAGCGCCTT|310871|13985|7695|280917|268786|
 |...|...|...|...|...|...|
 
+#### samplename.table.csv (This is required for the network generation in step 2)
 
+This will be the quantification output. The format will look like the table below.
+|Cellname*|Rabie|Counts|
+|:---:|:---:|:---:|
+|...|...|...|
+
+#### samplename.clustering.results
+
+This is the output from starcode, which is used to do error correction for the Rabid sequence. 
+
+
+*If you are using the multiple samples option, the Cellname here will be Overall_sample_name_Individual_sample_name_CTGTGACCAGCGCCTT. The Overall sample name and individual sample name is added to the cell name as prefix in order to avoid cell name collision between samples.
 
 ### Step 2: Generate the igraph network 
 #### Use the generate_network.R script to read filter Rabies barcodes and generate a network representation of the data from the output of Step 2 

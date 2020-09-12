@@ -96,6 +96,24 @@ If you have filtered data type for the samples, here is the sample sheet that yo
 |B_R3.fastq.gz|Overall_sample1|B|
 |C_R3.fastq.gz|Overall_sample1|C|
 
+#### Output of Quanfitying step
+
+There will be 4 output files from the Quantifying step.
+
+##### outputname_filtered.fastq
+
+This will be an intermediate file generated during the pipeline. Feel free to delete it.
+
+#### outputname_statistics.tsv
+
+This will be the cell statistics during the filtering step. The format will look like the table below.
+
+|Cellname|number of reads|number of reads with 5end handle|number of reads with 3end handle|number of reads with both handle|number of reads pass the structure filter|
+|:===:|:===:|:===:|:===:|:===:|:===:|
+|CTGTGACCAGCGCCTT*|310871|13985|7695|280917|268786|
+
+
+
 
 ### Step 2: Generate the igraph network 
 #### Use the generate_network.R script to read filter Rabies barcodes and generate a network representation of the data from the output of Step 2 

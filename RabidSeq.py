@@ -599,7 +599,7 @@ class multi_Rabid_Seq_Processer:
                  'number of reads with both handle',
                  'number of reads pass the structure filter'])  # number of reads, number of reads with both handle, number of reads pass the structure filter
             for cell in self.cell_information.keys():
-                writer.writerow([cell, self.cell_information[cell][0], self.cell_information[cell][1],
+                writer.writerow([self.Overall_sample_name+'_'+cell, self.cell_information[cell][0], self.cell_information[cell][1],
                                  self.cell_information[cell][2], self.cell_information[cell][3],
                                  self.cell_information[cell][4]])
         csvfile.close()
@@ -645,7 +645,7 @@ class multi_Rabid_Seq_Processer:
             for i in range(len(valid_cells)):
                 for j in range(len(Rabid)):
                     if file_matrix.loc[Rabid[j],valid_cells[i]]!=0:
-                        writer.writerow([valid_cells[i],Rabid[j],file_matrix.loc[Rabid[j],valid_cells[i]]])
+                        writer.writerow([self.Overall_sample_name+'_'+valid_cells[i],Rabid[j],file_matrix.loc[Rabid[j],valid_cells[i]]])
         csvfile.close()
 
 def QC(fastq):

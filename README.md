@@ -113,21 +113,21 @@ There will be 4 output files from the Quantifying step. You only need the sample
 	
 **outputname_statistics.tsv** -  statistics from filtering step. The format is: 
 
-	|Cellname*|number of reads|number of reads with 5end handle|number of reads with 3end handle|number of reads with both handle|number of reads pass the structure filter|
-	|:---:|:---:|:---:|:---:|:---:|:---:|
-	|Overall_sample_name_Individual_sample_name_CTGTGACCAGCGCCTT|310871|13985|7695|280917|268786|
-	|...|...|...|...|...|...|
+|Cellname*|number of reads|number of reads with 5end handle|number of reads with 3end handle|number of reads with both handle|number of reads pass the structure filter|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+|Overall_sample_name_Individual_sample_name_CTGTGACCAGCGCCTT|310871|13985|7695|280917|268786|
+|...|...|...|...|...|...|
 
 
 **samplename.table.csv** - UMI counts (This is required for the network generation in step 2). This will be the quantification output. The format is: 
 	
-	|Cellname*|Rabie|Counts|
-	|:---:|:---:|:---:|
-	|Overall_sample_name_Individual_sample_name_CTGTGACCAGCGCCTT|...|...|
+|Cellname*|Rabie|Counts|
+|:---:|:---:|:---:|
+|Overall_sample_name_Individual_sample_name_CTGTGACCAGCGCCTT|...|...|
 
 **samplename.clustering.results** - Barcode clustering (Starcode) output. This is used to perform error correction on Rabies barcode sequences. 
 
-	NOTE: Cellname here will be Overall_sample_name_Individual_sample_name_CTGTGACCAGCGCCTT. The Overall sample name (mouse) and individual sample name (sequencing library) is added to the cell name as prefix in order to avoid cell barcode collisions between mice.
+*NOTE: Cellname here will be Overall_sample_name_Individual_sample_name_CTGTGACCAGCGCCTT. The Overall sample name (mouse) and individual sample name (sequencing library) is added to the cell name as prefix in order to avoid cell barcode collisions between mice.
 
 ### Step 3: Generate the igraph network 
 #### Use the generate_network.R script to read filter Rabies barcodes and generate a network representation of the data from the output of Step 2 

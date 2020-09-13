@@ -129,7 +129,7 @@ There will be 4 output files from the Quantifying step. You only need the sample
 
 	NOTE: Cellname here will be Overall_sample_name_Individual_sample_name_CTGTGACCAGCGCCTT. The Overall sample name (mouse) and individual sample name (sequencing library) is added to the cell name as prefix in order to avoid cell barcode collisions between mice.
 
-### Step 2: Generate the igraph network 
+### Step 3: Generate the igraph network 
 #### Use the generate_network.R script to read filter Rabies barcodes and generate a network representation of the data from the output of Step 2 
 
 Example input data files can be found in the input/ folder

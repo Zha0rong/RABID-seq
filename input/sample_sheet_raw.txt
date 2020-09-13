@@ -1,0 +1,4 @@
+Read1,Read2,Read3,Overall_Sample_Name,Individual_Sample_Name
+A_R1.fastq.gz,A_R2.fastq.gz,A_R3.fastq.gz,Overall_sample1,A
+B_R1.fastq.gz,B_R2.fastq.gz,B_R3.fastq.gz,Overall_sample1,B
+C_R1.fastq.gz,C_R2.fastq.gz,C_R3.fastq.gz,Overall_sample1,C

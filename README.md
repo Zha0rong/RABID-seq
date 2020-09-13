@@ -38,19 +38,19 @@ In this case, you have an output file from [inDrop pipeline](https://github.com/
 
 	
 ### Step 1: Prepare your sample sheet 
-Different samples sheets are needed depending on the type of input files you have. Please refer to the two templates we have provided for **Case 1**: Raw data and **Case 2**: Filtered data type and
 
 #### Combining samples that correspond to a single mouse
 To ensure unique cell barcoding, cells from a single mouse are divided into samples for sequencing and must be combined at the time of analysis. This allows all cell-cell connections to be determined within each mouse. 
 
-To combine samples by mouse, use an coma-delimited csv sheet to provide the following information: 
-	1. Name of the overall sample (mouse)
-	2. The names of individual samples 
-	3. The names of the input files.
+The sample sheets are **coma-delimited csv** files  with the following information: 
+	1. Name of the overall samples (mice, biological units)
+	2. Names of individual samples (sequencing libraries) 
+	3. Names of the input files (sequencing files)
 
+Different samples sheets are needed depending on the type of input files you have. Please refer to the two templates we have provided for **Case 1**: Raw data and **Case 2**: Filtered data. 
 
 #### Case 1: Raw data
-Suppose that we have sample A, B and C from mouse 1. If you want to determine the connection of cells between different samples. Here is the sample sheet that you need to have as input. One template is prepared in the repository.
+Suppose that you have **sample A, B and C** from **Mouse 1**. If you want to determine the connection of cells between different samples. The sample sheet will look like:
 
 |Read1|Read2|Read3|Overall_Sample_Name|Individual_Sample_Name|
 |:---:|:---:|:---:|:---:|:---:|
@@ -66,9 +66,9 @@ Suppose that we have sample A, B and C from mouse 1. If you want to determine th
 |C_R3.fastq.gz|Overall_sample1|C|
 
 
-### Step 1: Quantify Rabid-seq data.
+### Step 2: Quantify Rabid-seq data.
 
-Perform UMI counting on Rabies barcodes. 
+Now that the sample sheets are prepared, perform UMI counting on Rabies barcodes. 
 
 #### Case 1: Raw data
 For Raw data type (3 fastq files):
@@ -89,7 +89,7 @@ For Raw data type (3 fastq files):
     [option]
     #   -l the levenshtein distance. The distance is used to correct the Rabid barcode sequencing error. The default distance is 1.
 
-#### Case 2: Raw data 
+#### Case 2: Filtered data 
 For Filtered data type (1 fastq file):
 
     python RabidSeq --quantify_from_inDrop_demultiplexed_fastq_files [option]
@@ -110,24 +110,21 @@ For Filtered data type (1 fastq file):
 
 There will be 4 output files from the Quantifying step. You only need the samplename.table.csv in the next step to generate igraph network. 
 
-##### outputname_filtered.fastq
+	outputname_filtered.fastq - intermediate file generated during the pipeline. Feel free to delete it.
 
-This will be an intermediate file generated during the pipeline. Feel free to delete it.
+	
+	outputname_statistics.tsv This will be the cell statistics during the filtering step. The format will look like the table below.
 
-#### outputname_statistics.tsv
+	|Cellname*|number of reads|number of reads with 5end handle|number of reads with 3end handle|number of reads with both handle|number of reads pass the structure filter|
+	|:---:|:---:|:---:|:---:|:---:|:---:|
+	|CTGTGACCAGCGCCTT|310871|13985|7695|280917|268786|
+	|...|...|...|...|...|...|
 
-This will be the cell statistics during the filtering step. The format will look like the table below.
 
-|Cellname*|number of reads|number of reads with 5end handle|number of reads with 3end handle|number of reads with both handle|number of reads pass the structure filter|
-|:---:|:---:|:---:|:---:|:---:|:---:|
-|CTGTGACCAGCGCCTT|310871|13985|7695|280917|268786|
-|...|...|...|...|...|...|
-
-#### samplename.table.csv (This is required for the network generation in step 2)
-
-This will be the quantification output. The format will look like the table below.
-|Cellname*|Rabie|Counts|
-|:---:|:---:|:---:|
+	samplename.table.csv (This is required for the network generation in step 2). This will be the quantification output. The format will look like the table below.
+	
+	|Cellname*|Rabie|Counts|
+	|:---:|:---:|:---:|
 |...|...|...|
 
 #### samplename.clustering.results

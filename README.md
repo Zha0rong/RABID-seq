@@ -103,6 +103,20 @@ For Filtered data type (1 fastq file):
     [option]
        -l the levenshtein distance. The distance is used to correct the Rabid barcode sequencing error. The default distance is 1.
 
+#### Case 3: Combining samples into one large 'sample'
+
+    python RabidSeq --quantify_from_multiple_samples [option]
+    			-s samplesheet.csv
+    			-o outputdirectory/ 
+    			-n outputname 
+    
+    Required
+     #  -s the name of sample sheet introduced in step 1.
+     #  -o the output directory, which will store the output files of the results.
+     #  -n the name of the output. The name will be added to the results files as a prefix.
+     
+    [option]
+       -l the levenshtein distance. The distance is used to correct the Rabid barcode sequencing error. The default distance is 1.
 
 #### Output of Quanfitying step
 

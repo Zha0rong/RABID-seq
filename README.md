@@ -19,7 +19,7 @@
 ### Determine input file type
 There are two types of input file formats that can be used in this pipeline. 
 
-#### 2. After sequencing inDrops v3 libraries, there may be 3 fastq files per sample.  
+#### Case 1: After sequencing inDrops v3 libraries, there may be 3 fastq files per sample.  
 
 	1 file containing Cellbarcode 1 (8 bp), 
 	1 file containing Cellbarcode2 + UMI (14 bp),
@@ -29,7 +29,7 @@ This type of data will be referred as 'Raw' in later description.
 
 **Caution**: Before you decide that your data type is 'Raw', make sure that the names of files do not start with 'Undetermined'. If the names start with undetermined that means the data is not demultiplexed, and you may want to use the [inDrop pipeline](https://github.com/indrops/indrops).
 
-#### 2. After sequencing, there may only be 1 fastq file per 1 sample. This means that you have an output file from [inDrop pipeline](https://github.com/indrops/indrops). The inDrop pipeline extracts the cellbarcodes and UMIs from the Raw data type for you and include them in the Read ID in fastq file. The fastq file should look like this:
+#### Case 2: After sequencing, there may only be 1 fastq file per 1 sample. This means that you have an output file from [inDrop pipeline](https://github.com/indrops/indrops). The inDrop pipeline extracts the cellbarcodes and UMIs from the Raw data type for you and include them in the Read ID in fastq file. The fastq file should look like this:
 
     Read_ID Cellbarcode1:Cellbarcode2:UMI  
     Rabiesbarcode  
@@ -42,19 +42,27 @@ This type of data will be referred as 'Filtered' in later description.
 
 Perform UMI counting on Rabies barcodes
 
-#### If there is just one sample per 'sample'...
+
+#### Case 1: Raw data
 For Raw data type (3 fastq files):
 
-    python RabidSeq --quantify_from_inDrop_raw_fastq_files [options] -R1 Cellbarcode1.fastq.gz (8bp Cellbarcode 1) -R2 Cellbarcode2andUMI.fastq.gz (8bp Cellbarcode2 and 6bp UMI) -R3 Read.fastq.gz -o outputdirectory/ -n outputname 
-    Explanation:
+    python RabidSeq --quantify_from_inDrop_raw_fastq_files [options] 
+   			[-R1 Cellbarcode1.fastq.gz]
+    			[-R2 Cellbarcode2andUMI.fastq.gz] 
+    			[-R3 Read.fastq.gz]
+    			[-o outputdirectory/]
+    			[-n outputname]
+    Required
        -R1 the name of fastq file that includes the 8bp Cellbarcode 1 (Make sure to include full directory if not in the same directory as script).
        -R2 the name of fastq file that includes the 8bp Cellbarcode 2 and 6bp UMI.
        -R3 the name of fastq file that includes the Read.
        -o the output directory, which will store the output files of the results.
        -n the name of the output. The name will be added to the results files as a prefix.
-       [option]
+       
+    [option]
        -l the levenshtein distance. The distance is used to correct the Rabid barcode sequencing error. The default distance is 1.
 
+#### Case 2: Raw data 
 For Filtered data type (1 fastq file):
 
     python RabidSeq --quantify_from_inDrop_demultiplexed_fastq_files -R3 Read.fastq.gz -o outputdirectory/ -n outputname 
@@ -64,6 +72,8 @@ For Filtered data type (1 fastq file):
        -n the name of the output. The name will be added to the results files as a prefix.
        [option]
        -l the levenshtein distance. The distance is used to correct the Rabid barcode sequencing error. The default distance is 1.
+
+
 
 #### If there are more than one sample per 'sample'...
 

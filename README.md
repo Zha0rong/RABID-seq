@@ -115,7 +115,7 @@ There will be 4 output files from the Quantifying step. You only need the sample
 
 |Cellname*|number of reads|number of reads with 5end handle|number of reads with 3end handle|number of reads with both handle|number of reads pass the structure filter|
 |:---:|:---:|:---:|:---:|:---:|:---:|
-|Overall_sample_name_Individual_sample_name_CTGTGACCAGCGCCTT|310871|13985|7695|280917|268786|
+|Overall_sample_Individual_sample_CTGTGACCAGCGCCTT|310871|13985|7695|280917|268786|
 |...|...|...|...|...|...|
 
 
@@ -123,7 +123,7 @@ There will be 4 output files from the Quantifying step. You only need the sample
 	
 |Cellname*|Rabie|Counts|
 |:---:|:---:|:---:|
-|Overall_sample_name_Individual_sample_name_CTGTGACCAGCGCCTT|...|...|
+|Overall_sample_Individual_sample_CTGTGACCAGCGCCTT|...|...|
 
 **samplename.clustering.results** - Barcode clustering (Starcode) output. This is used to perform error correction on Rabies barcode sequences. 
 

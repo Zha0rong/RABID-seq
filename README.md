@@ -47,30 +47,35 @@ Perform UMI counting on Rabies barcodes
 For Raw data type (3 fastq files):
 
     python RabidSeq --quantify_from_inDrop_raw_fastq_files [options] 
-   			[-R1 Cellbarcode1.fastq.gz]
-    			[-R2 Cellbarcode2andUMI.fastq.gz] 
-    			[-R3 Read.fastq.gz]
-    			[-o outputdirectory/]
-    			[-n outputname]
+   			-R1 Cellbarcode1.fastq.gz
+    			-R2 Cellbarcode2andUMI.fastq.gz
+    			-R3 Read.fastq.gz
+    			-o outputdirectory/
+    			-n outputname
     Required
-       -R1 the name of fastq file that includes the 8bp Cellbarcode 1 (Make sure to include full directory if not in the same directory as script).
-       -R2 the name of fastq file that includes the 8bp Cellbarcode 2 and 6bp UMI.
-       -R3 the name of fastq file that includes the Read.
-       -o the output directory, which will store the output files of the results.
-       -n the name of the output. The name will be added to the results files as a prefix.
+    #   -R1 the name of fastq file that includes the 8bp Cellbarcode 1 (Make sure to include full directory if not in the same directory as script).
+    #   -R2 the name of fastq file that includes the 8bp Cellbarcode 2 and 6bp UMI.
+    #   -R3 the name of fastq file that includes the Read.
+    #   -o the output directory, which will store the output files of the results.
+    #   -n the name of the output. The name will be added to the results files as a prefix.
        
     [option]
-       -l the levenshtein distance. The distance is used to correct the Rabid barcode sequencing error. The default distance is 1.
+    #   -l the levenshtein distance. The distance is used to correct the Rabid barcode sequencing error. The default distance is 1.
 
 #### Case 2: Raw data 
 For Filtered data type (1 fastq file):
 
-    python RabidSeq --quantify_from_inDrop_demultiplexed_fastq_files -R3 Read.fastq.gz -o outputdirectory/ -n outputname 
-    Explanation:
-       -R3 the name of fastq file that includes the Read. The cell barcode and umi information are already included in the fastq file
-       -o the output directory, which will store the output files of the results.
-       -n the name of the output. The name will be added to the results files as a prefix.
-       [option]
+    python RabidSeq --quantify_from_inDrop_demultiplexed_fastq_files [option]
+    			-R3 Read.fastq.gz
+    			-o outputdirectory/ 
+    			-n outputname 
+    
+    Required
+     #  -R3 the name of fastq file that includes the Read. The cell barcode and umi information are already included in the fastq file
+     #  -o the output directory, which will store the output files of the results.
+     #  -n the name of the output. The name will be added to the results files as a prefix.
+     
+    [option]
        -l the levenshtein distance. The distance is used to correct the Rabid barcode sequencing error. The default distance is 1.
 
 

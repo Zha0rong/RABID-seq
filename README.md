@@ -8,40 +8,31 @@
 
 ## Example input files are found in input/
 
-~~project.yaml~~
-~~read1.fastq~~ 
-~~read2.fastq~~
-
-~~sample_sheet.csv~~
-~~table.csv~~
-
-network.RData
-
+rna_counts.csv
 metadata.csv
 
-rna_counts.csv
-
+network.RData
 cell_colors.csv
-
 cluster_colors.csv
 
+## Analyze Rabid-Seq data.
 
-## Starting analyzing the Rabid-Seq data.
+### Determine input file type
+There are two types of input file formats that can be used in this pipeline. 
 
-### Figuring out what you have in hands.
-The first thing one needs to know before using the pipeline is what input he/she is having in hands. It is likely that you have one of these types of input:
+* 3 fastq files for 1 sample. 
 
-1. 3 fastq files for 1 sample. The inDrop sequencing data include 3 fastq files: 
+After sequencing inDrops v3 libraries, there may be 3 fastq files: 
 
-	1 file which includes the Cellbarcode 1 (8 bp), 
-	1 file which includes Cellbarcode2 + UMI (14 bp),
-	1 file which includes RNA read (varied length).
+	* 1 file containing Cellbarcode 1 (8 bp), 
+	* 1 file containing Cellbarcode2 + UMI (14 bp),
+	* 1 file containing RNA read (varied length).
 
 This type of data will be referred as 'Raw' in later description.
 
-Caution: Before you decide that your data type is 'Raw', make sure that the names of files do not start with 'Undetermined'. If the names start with undetermined that means the data is not demultiplexed, and you may want to use the [inDrop pipeline](https://github.com/indrops/indrops).
+	Caution: Before you decide that your data type is 'Raw', make sure that the names of files do not start with 'Undetermined'. If the names start with undetermined that means the data is not demultiplexed, and you may want to use the [inDrop pipeline](https://github.com/indrops/indrops).
 
-2. 1 fastq file for 1 sample. This means that you have an output file from [inDrop pipeline](https://github.com/indrops/indrops). The inDrop pipeline extracts the cellbarcodes and UMIs from the Raw data type for you and include them in the Read ID in fastq file. The fastq file should look like this:
+* 1 fastq file for 1 sample. This means that you have an output file from [inDrop pipeline](https://github.com/indrops/indrops). The inDrop pipeline extracts the cellbarcodes and UMIs from the Raw data type for you and include them in the Read ID in fastq file. The fastq file should look like this:
 
     Read_ID Cellbarcode1:Cellbarcode2:UMI  
     Rabiesbarcode  

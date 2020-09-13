@@ -44,7 +44,7 @@ To ensure unique cell barcoding, cells from a single mouse are divided into samp
 
 The sample sheet is a **coma-delimited csv** file with the following information: 
 
-	1. Overall_Sample_Name = Sample name of the biological unit (mice)
+	1. Overall_Sample_Name = Sample names of the biological unit (mice)
 	2. Individual_Sample_Name = Sample names of individual library samples (sequencing libraries) 
 	3. Read<1,2,3> = Names of the input files (sequencing files)
 

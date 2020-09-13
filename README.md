@@ -42,16 +42,15 @@ In this case, you have an output file from [inDrop pipeline](https://github.com/
 #### Combining samples that correspond to a single mouse
 To ensure unique cell barcoding, cells from a single mouse are divided into samples for sequencing and must be combined at the time of analysis. This allows all cell-cell connections to be determined within each mouse. 
 
-The sample sheets are **coma-delimited csv** files  with the following information: 
+The sample sheet is a **coma-delimited csv** file with the following information: 
+
 	1. Name of the overall samples (mice, biological units)
 	2. Names of individual samples (sequencing libraries) 
 	3. Names of the input files (sequencing files)
 
-Different samples sheets are needed depending on the type of input files you have. Please refer to the two templates we have provided for **Case 1**: Raw data and **Case 2**: Filtered data. 
+A different samples sheet format is needed depending on the type of input files you have. Please refer to the two templates we have provided for **Case 1: Raw data and Case 2: Filtered data.**. Suppose that you have **sample A, B and C** from **Mouse 1**. The sample sheet will look like:
 
 #### Case 1: Raw data
-Suppose that you have **sample A, B and C** from **Mouse 1**. If you want to determine the connection of cells between different samples. The sample sheet will look like:
-
 |Read1|Read2|Read3|Overall_Sample_Name|Individual_Sample_Name|
 |:---:|:---:|:---:|:---:|:---:|
 |A_R1.fastq.gz|A_R2.fastq.gz|A_R3.fastq.gz|Overall_sample1|A|
@@ -67,7 +66,6 @@ Suppose that you have **sample A, B and C** from **Mouse 1**. If you want to det
 
 
 ### Step 2: Quantify Rabid-seq data.
-
 Now that the sample sheets are prepared, perform UMI counting on Rabies barcodes. 
 
 #### Case 1: Raw data
@@ -110,10 +108,10 @@ For Filtered data type (1 fastq file):
 
 There will be 4 output files from the Quantifying step. You only need the samplename.table.csv in the next step to generate igraph network. 
 
-	outputname_filtered.fastq - intermediate file generated during the pipeline. Feel free to delete it.
+**outputname_filtered.fastq** - intermediate file generated during the pipeline. Feel free to delete it.
 
 	
-	outputname_statistics.tsv This will be the cell statistics during the filtering step. The format will look like the table below.
+**outputname_statistics.tsv** -  statistics from filtering step. The format is: 
 
 	|Cellname*|number of reads|number of reads with 5end handle|number of reads with 3end handle|number of reads with both handle|number of reads pass the structure filter|
 	|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -121,18 +119,15 @@ There will be 4 output files from the Quantifying step. You only need the sample
 	|...|...|...|...|...|...|
 
 
-	samplename.table.csv (This is required for the network generation in step 2). This will be the quantification output. The format will look like the table below.
+**samplename.table.csv** - UMI counts (This is required for the network generation in step 2). This will be the quantification output. The format is: 
 	
 	|Cellname*|Rabie|Counts|
 	|:---:|:---:|:---:|
-|...|...|...|
+	|...|...|...|
 
-#### samplename.clustering.results
+**samplename.clustering.results** - Barcode clustering (Starcode) output. This is used to perform error correction on Rabies barcode sequences. 
 
-This is the output from starcode, which is used to do error correction for the Rabid sequence. 
-
-
-*If you are using the multiple samples option, the Cellname here will be Overall_sample_name_Individual_sample_name_CTGTGACCAGCGCCTT. The Overall sample name and individual sample name is added to the cell name as prefix in order to avoid cell name collision between samples.
+	NOTE: Cellname here will be Overall_sample_name_Individual_sample_name_CTGTGACCAGCGCCTT. The Overall sample name (mouse) and individual sample name (sequencing library) is added to the cell name as prefix in order to avoid cell barcode collisions between mice.
 
 ### Step 2: Generate the igraph network 
 #### Use the generate_network.R script to read filter Rabies barcodes and generate a network representation of the data from the output of Step 2 

@@ -1,8 +1,0 @@
-Total number of reads	number of reads with 5end handle	number of reads with 3end handle	number of reads with both handle	number of reads pass the structure filter
-1000	436	17	390	843
-5000	2232	118	1924	4276
-10000	4409	226	3899	8538
-50000	22271	1156	19570	43027
-100000	44839	2182	39030	86100
-500000	222487	10957	194881	428517
-755409	335660	16279	296037	648282

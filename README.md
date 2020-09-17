@@ -1,21 +1,5 @@
 # RABID-seq bioinformatics pipeline
 
-## Scripts used in this pipeline
-	RabidSeq.py
-	generate_network.R
-	viz_network.R
-    
-## Example input files are found in input/
-
-	rna_counts.csv
-	metadata.csv
-
-	network.RData
-	cell_colors.csv
-	cluster_colors.csv
-
-## Analyze Rabid-Seq data.
-
 ### Determine input file type
 There are two types of input file formats that can be used in this pipeline. 
 

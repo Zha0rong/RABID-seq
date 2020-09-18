@@ -102,7 +102,7 @@ For Filtered data type (1 fastq file):
     [option]
        -l the levenshtein distance. The distance is used to correct the Rabid barcode sequencing error. The default distance is 1.
 
-#### Output of Quanfitying step
+### Output of Quanfitying step
 
 There will be 4 output files from the Quantifying step. You only need the samplename.table.csv in the next step to generate igraph network. 
 

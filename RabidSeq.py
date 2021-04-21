@@ -11,6 +11,7 @@ import pandas as pd
 import re
 import bz2
 import argparse
+import random
 
 parser = argparse.ArgumentParser(prog = "Rabid Seq pipeline",usage="RNAseq pipeline.")
 
@@ -24,17 +25,49 @@ parser.add_argument("--check_library_diversity",dest='check_library_diversity',a
 parser.add_argument('-R1','--Cellbarcode1',dest='Cellbarcode1',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv)
 parser.add_argument('-R2','--Cellbarcode2andUMI',dest='Cellbarcode2andUMI',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv)
 parser.add_argument('-R3','--Read',dest='Read',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv
-                                                                       or "--quantify_from_filtered_fastq_files" in sys.argv)
+                                                                       or "--quantify_from_filtered_fastq_files" in sys.argv or "--check_library_diversity" in sys.argv)
 parser.add_argument('-o','--output',dest='outputdirectory',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv
-                                                                                   or "--quantify_from_filtered_fastq_files" in sys.argv
+                                                                                   or "--quantify_from_filtered_fastq_files" in sys.argv or "--check_library_diversity" in sys.argv
                     or "--quantify_from_multiple_samples" in sys.argv)
 parser.add_argument('-n','--name',dest='name',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv
                                                                       or "--quantify_from_filtered_fastq_files" in sys.argv
-                    or "--quantify_from_multiple_samples" in sys.argv)
+                    or "--quantify_from_multiple_samples" in sys.argv  or "--check_library_diversity" in sys.argv)
 parser.add_argument('-s','--sheet',dest='sheet',action="store",required="--quantify_from_multiple_samples" in sys.argv)
 
 parser.add_argument('-l','--levenshtein',dest='distance',action='store',default=1)
 
+
+def ParseFastq(pathstofastqs):
+    if pathstofastqs[0].endswith('.gz'):
+        processes=[subprocess.Popen(['zcat',(fastq)],stdout=subprocess.PIPE) for fastq in pathstofastqs]
+        totalreads = [r.stdout for r in processes]
+    elif pathstofastqs[0].endswith('.bz2'):
+        processes=[subprocess.Popen(['bzcat',(fastq)],stdout=subprocess.PIPE) for fastq in pathstofastqs]
+        totalreads = [r.stdout for r in processes]
+    elif pathstofastqs[0].endswith('.fastq'):
+        processes=[subprocess.Popen(['cat',(fastq)],stdout=subprocess.PIPE) for fastq in pathstofastqs]
+        totalreads = [r.stdout for r in processes]
+    else:
+        sys.exit('The format of the file %s is not recognized.'%(str(pathstofastqs)))
+    while True:
+        names=[next(read).decode() for read in totalreads]
+        Sequence=[next(read).decode() for read in totalreads]
+        Blank=[next(read).decode() for read in totalreads]
+        qualityscore= [next(read).decode() for read in totalreads]
+        assert all(name==names[0] for name in names)
+        if names:
+            yield [names[0], Sequence, qualityscore]
+        else:
+            break
+    for read in totalreads:
+        read.close()
+
+
+def write_fastq(file,ID,seq,quality_score):
+    file.write('%s\n'%ID)
+    file.write('%s\n' % seq)
+    file.write('+\n')
+    file.write('%s\n' % quality_score)
 
 class Rabid_Seq_Processor:
     '''This class is used to read in the inDrop fastq data (3 gzipped file: Cell Barcode 1, Cell Barcode 2 + UMI, Rabid (RNA) Reads).
@@ -652,8 +685,140 @@ class multi_Rabid_Seq_Processer:
                         writer.writerow([self.Overall_sample_name+'_'+valid_cells[i],Rabid[j],file_matrix.loc[Rabid[j],valid_cells[i]]])
         csvfile.close()
 
-def QC(fastq):
-    return 0
+
+
+
+
+class Rabid_Barcodes_QC:
+    #This class only checks diversity of Rabid Barcodes.
+    Read=''
+    samplename = ''
+    outputdirectory = ''
+    fiveendhandle = 'GCTAGC'
+    threeendhandle = 'GGCGCGCC'
+    pattern = '[AGC][ACT][AGT][GCT][ACG][ACT][AGT][GCT]AT[AGC][ACT][AGT][GCT][ACG][ACT][AGT][GCT]AT[AGC][ACT][AGT][GCT][ACG][ACT][AGT][GCT]'
+    cell_information = [0, 0, 0, 0, 0]
+
+    def __init__(self,Read,samplename,outputdirectory):
+        self.Read=Read
+        self.samplename=samplename
+        self.outputdirectory=outputdirectory
+    def processing(self):
+        outputfile=open('%s/%s_filtered.fastq'%(self.outputdirectory,self.samplename),'wt')
+        for read in ParseFastq([self.Read]):
+            readid=read[0].strip('\n')
+            Rabieread=read[1][0].strip('\n')
+            QualityScore=read[2][0].strip('\n')
+            self.cell_information[0]+=1
+            if self.fiveendhandle in Rabieread and self.threeendhandle in Rabieread:
+                self.cell_information[3]+=1
+                realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.threeendhandle)]
+                realQualityScore=QualityScore[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.threeendhandle)]
+                if re.match(self.pattern,realRabieread):
+                    self.cell_information[4]+=1
+                    write_fastq(outputfile,readid.strip('\n'),realRabieread,realQualityScore)
+            else:
+                if self.fiveendhandle in Rabieread:
+                    self.cell_information[1]+=1
+                    realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle)+28]
+                    realQualityScore=QualityScore[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle)+28]
+                    if re.match(self.pattern,realRabieread):
+                        self.cell_information[4]+=1
+                        write_fastq(outputfile,readid.strip('\n'),realRabieread,realQualityScore)
+                elif self.threeendhandle in Rabieread:
+                    self.cell_information[2]+=1
+                    realRabieread=Rabieread[Rabieread.find(self.threeendhandle)-28:Rabieread.find(self.threeendhandle)]
+                    realQualityScore=QualityScore[Rabieread.find(self.threeendhandle)-28:Rabieread.find(self.threeendhandle)]
+                    if re.match(self.pattern,realRabieread):
+                        self.cell_information[4]+=1
+                        write_fastq(outputfile,read[0].strip('\n'),realRabieread,realQualityScore)
+        outputfile.close()
+
+        os.system('starcode --print-clusters --dist 0 -i %s/%s_filtered.fastq -o %s/%s.clustering.results'%(self.outputdirectory,self.samplename,self.outputdirectory,self.samplename))
+
+        os.system('gzip %s/%s_filtered.fastq'%(self.outputdirectory,self.samplename))
+        with open('%s/%s.statistics.tsv'%(self.outputdirectory,self.samplename), "w", newline="") as csvfile:
+            writer=csv.writer(csvfile,delimiter='\t')
+            writer.writerow(['number of reads','Number of reads with only 5end handle','Number of reads with only 3end hadnle','Number of reads with both handles','Number of reads pass structure filter'])
+            writer.writerow(self.cell_information)
+        csvfile.close()
+
+    def rarefactioncurve(self):
+        starcode=open('%s/%s.clustering.results'%(self.outputdirectory,self.samplename),'r')
+        starcode.line=starcode.readlines()
+        truebarcode={}
+        for line in starcode.line:
+            connectionitem=line.split(sep='\t')[0]
+            time=int(line.split(sep='\t')[1])
+            cluster=line.split(sep='\t')[2]
+            if time >1:
+                for member in cluster.split(sep=','):
+                    truebarcode[member.strip('\n')]=connectionitem.strip('\n')
+        starcode.close()
+        rare_faction={1000:[],5000:[],
+        10000:[],50000:[],
+        100000:[],500000:[],
+        1000000:[],5000000:[],
+        10000000:[],50000000:[],
+        100000000:[],500000000:[]}
+        rare_faction_statistics={1000:[0,0,0,0,0],5000:[0,0,0,0,0],
+        10000:[0,0,0,0,0],50000:[0,0,0,0,0],
+        100000:[0,0,0,0,0],500000:[0,0,0,0,0],
+        1000000:[0,0,0,0,0],5000000:[0,0,0,0,0],
+        10000000:[0,0,0,0,0],50000000:[0,0,0,0,0],
+        100000000:[0,0,0,0,0],500000000:[0,0,0,0,0]}#Total number of reads  number of reads number of reads with 5end handle    number of reads with 3end handle    number of reads with both handle    number of reads pass the structure filter
+        for read in ParseFastq([self.Read]):
+            readid=read[0].strip('\n').split(' ')[0]
+            Rabieread=read[1][0].strip('\n')
+            for faction in rare_faction:
+                if rare_faction_statistics[faction][0] < faction:
+                    random_selector=random.randint(1,101)
+                    if random_selector <=50:
+                        rare_faction_statistics[faction][0]+=1
+                        if self.fiveendhandle in Rabieread and self.threeendhandle in Rabieread:
+                            realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.threeendhandle)]
+                            if re.match(self.pattern,realRabieread):
+                                if realRabieread in truebarcode.keys():
+                                    rare_faction[faction].append(truebarcode[realRabieread])
+                                rare_faction_statistics[faction][3]+=1
+                                rare_faction_statistics[faction][4]+=1
+                        else:
+                            if self.fiveendhandle in Rabieread:
+                                realRabieread=Rabieread[Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle):Rabieread.find(self.fiveendhandle)+len(self.fiveendhandle)+28]
+                                if re.match(self.pattern,realRabieread):
+                                    if realRabieread in truebarcode.keys():
+                                        rare_faction[faction].append(truebarcode[realRabieread])
+                                    rare_faction_statistics[faction][1]+=1
+                                    rare_faction_statistics[faction][4]+=1
+                            elif self.threeendhandle in Rabieread:
+                                realRabieread=Rabieread[Rabieread.find(self.threeendhandle)-28:Rabieread.find(self.threeendhandle)]
+                                if re.match(self.pattern,realRabieread):
+                                    if realRabieread in truebarcode.keys():
+                                        rare_faction[faction].append(truebarcode[realRabieread])
+                                    rare_faction_statistics[faction][2]+=1
+                                rare_faction_statistics[faction][4]+=1
+
+
+            if rare_faction_statistics[500000000][0] > 500000000:
+                break
+
+        with open('%s/%s.rarefactioncurve.tsv'%(self.outputdirectory,self.samplename), "w", newline="") as csvfile:
+            writer=csv.writer(csvfile,delimiter='\t')
+            writer.writerow(['Number of reads','Unique sequences'])
+            for sampling in rare_faction:
+                writer.writerow([sampling,len(list(dict.fromkeys(rare_faction[sampling])))])
+        csvfile.close()
+        with open('%s/%s.rarefactioncurve.statistics.tsv'%(self.outputdirectory,self.samplename), "w", newline="") as csvfile:
+            writer=csv.writer(csvfile,delimiter='\t')
+            writer.writerow(['Total number of reads','number of reads with 5end handle','number of reads with 3end handle','number of reads with both handle','number of reads pass the structure filter'])
+            for sampling in rare_faction_statistics:
+                writer.writerow([rare_faction_statistics[sampling][0],
+                rare_faction_statistics[sampling][1],
+                rare_faction_statistics[sampling][2],
+                rare_faction_statistics[sampling][3],
+                rare_faction_statistics[sampling][4]])
+        csvfile.close()
+
 
 if __name__=="__main__":
     options, arg = parser.parse_known_args()
@@ -703,3 +868,10 @@ if __name__=="__main__":
         process.Extract_Filtering()
         process.Clustering()
         process.Correction_and_generate_table()
+    if options.check_library_diversity:
+        check_library_diversity=Rabid_Barcodes_QC(Read=options.Read,
+                                                  samplename=options.name,
+                                                  outputdirectory=options.outputdirectory)
+        check_library_diversity.processing()
+        check_library_diversity.rarefactioncurve()
+

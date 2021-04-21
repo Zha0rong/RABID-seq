@@ -19,6 +19,7 @@ parser = argparse.ArgumentParser(prog = "Rabid Seq pipeline",usage="RNAseq pipel
 parser.add_argument("--quantify_from_inDrop_raw_fastq_files",dest='quantify_from_inDrop_fastq_files',action="store_true",help='Quantify from 3 inDrop files')
 parser.add_argument("--quantify_from_inDrop_demultiplexed_fastq_files",dest='quantify_from_filtered_fastq_files',action="store_true",help='Quantify from 1 inDrop fastq files')
 parser.add_argument("--quantify_from_multiple_samples",dest='quantify_from_multiple_samples',action="store_true",help='Quantify from multiple samples.')
+parser.add_argument("--check_library_diversity",dest='check_library_diversity',action="store_true",help='Check Rabid barcodes diversity in Plasmid Library.')
 
 parser.add_argument('-R1','--Cellbarcode1',dest='Cellbarcode1',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv)
 parser.add_argument('-R2','--Cellbarcode2andUMI',dest='Cellbarcode2andUMI',action="store",required="--quantify_from_inDrop_fastq_files" in sys.argv)
@@ -312,6 +313,7 @@ class Rabid_Seq_Processor:
         starcode.close()
         Rabid=Rabid_correction_database.values()
         Rabid=list(dict.fromkeys(Rabid))
+
         for rabie in Rabid:
             umi_list[rabie]=[]
         file_matrix=pd.DataFrame(0,index=list(Rabid),columns=list(valid_cells))
@@ -319,6 +321,7 @@ class Rabid_Seq_Processor:
         for read in self._Parse_filtered_fastq():
             CELLNAME=read[0].split(sep=' ')[1].split(sep=':')[0]+read[0].split(sep=' ')[1].split(sep=':')[1]
             UMI=read[0].split(sep=' ')[1].split(sep=':')[2]
+            UMI=CELLNAME+UMI
             reads=read[1][0].strip('\n')
             if CELLNAME in valid_cells:
                 if reads in Rabid_correction_database.keys():
@@ -633,6 +636,7 @@ class multi_Rabid_Seq_Processer:
         for read in self.Parse_filtered_fastq('%s/%s_filtered.fastq'%(self.output_dir,self.Overall_sample_name)):
             CELLNAME=read[0].split(sep=' ')[1].split(sep=':')[0]+'_'+read[0].split(sep=' ')[1].split(sep=':')[1]+read[0].split(sep=' ')[1].split(sep=':')[2]
             UMI=read[0].split(sep=' ')[1].split(sep=':')[2]
+            UMI=CELLNAME+UMI
             reads=read[1][0].strip('\n')
             if CELLNAME in valid_cells:
                 if reads in Rabid_correction_database.keys():

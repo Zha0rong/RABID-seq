@@ -126,3 +126,14 @@ There will be 4 output files from the Quantifying step. You only need the sample
 **samplename.clustering.results** - Barcode clustering (Starcode) output. This is used to perform error correction on Rabies barcode sequences. 
 
 *NOTE: Cellname here will be Overall_sample_name_Individual_sample_name_CTGTGACCAGCGCCTT. The Overall sample name (mouse) and individual sample name (sequencing library) is added to the cell name as prefix in order to avoid cell barcode collisions between mice.
+
+### QC: find barcodes Diversity
+
+The Reads.fastq.gz is the fastq file includes the Rabid barcodes. 
+
+    python RabidSeq --check_library_diversity
+    			-R3 Reads.fastq.gz
+    			-o outputdirectory/ 
+    			-n outputname 
+
+
